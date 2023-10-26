@@ -64,9 +64,29 @@ Objectif :
 > Former des groupes de 3 fourmis pour qu'elles puissent gagner les combats
 
 ---
-## WINNING :
+## ADVANCED_GAME :
 Condition :
 - \>= 18 fourmis
+- < 43 fourmis
+
+Répartition :
+- 3+ fourmis gardes                          [GUARDING]
+- 5* fourmis en formation                    [ROAMING]
+
+Comportement :
+- Toujours en formation                      [FORMING] (formation x)
+- Attaque d'ennemis                          [ATTACKING]
+- Récolte de bouffe                          [GATHERING]
+
+Sécurité :
+- Une équipe reste collée à la fourmilière
+
+Objectif :
+> Récolte de bouffe 100% sécuritaire
+
+## WINNING :
+Condition :
+- \>= 43 fourmis
 
 Répartition :
 - 3+ fourmis gardes                          [GUARDING] 
