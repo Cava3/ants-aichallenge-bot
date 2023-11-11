@@ -25,6 +25,11 @@ struct Node
     {
         distanceFromStart = 9999999;
     };
+
+    bool operator==(const Node& other) const
+    {
+        return location == other.location;
+    }
 };
 
 #endif //NODE_HH_
