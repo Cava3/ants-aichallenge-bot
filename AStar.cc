@@ -10,6 +10,7 @@
 class AStar {
     std::vector<Node> _path;
     std::vector<Node> _toVisit;
+    std::vector<Node> _visited;
     int _maxDistance;
 
     AStar() {
@@ -17,7 +18,10 @@ class AStar {
     }
     ~AStar(){}
 
-    // Fonctions publiques d'intéraction avec le module
+    //==========================================================================
+    //##           Fonctions publiques d'intéraction avec le module           ##
+    //==========================================================================
+
     std::vector<Location> getPath() {
         std::vector<Location> path;
         for(int i=0; i<(int)_path.size(); i++) {
@@ -40,12 +44,35 @@ class AStar {
         _reset();
     }
 
-    // Fonctions privées utilitaires
-    void _addAdjacentNodes(Node& node, const State& state) {}
+    //==========================================================================
+    //##                    Fonctions privées utilitaires                     ##
+    //==========================================================================
+
+    void _addAdjacentNodes(Node& node, const State& state) {
+        Location location = node.location;
+        Node* previousNode = &node;
+
+        for(int d=0; d<TDIRECTIONS; d++) {
+            // Je créer une Location à partir de la direction
+            Location adjacentLocation = state.getLocation(location, d);
+
+            // Je vois si je peux m'y déplacer
+            if(_isLocationValid(adjacentLocation, state)) {
+                //TODO: HARD : Voir le repassage sur Node avec la liste _visited
+                Node adjacentNode = Node(adjacentLocation);
+                adjacentNode.previousNode = previousNode;
+                adjacentNode.distanceFromStart = node.distanceFromStart + 1;
+                _toVisit.push_back(adjacentNode);
+            }
+        }
+    }
+
+
     void _visitNode(Node& node, const State& state, const Location& end) {
         // On valide la visite du noeud
         node.explored = true;
         _toVisit.pop_back();
+        _visited.push_back(node);
 
         // Si la distance est trop grande, on arrête
         if(node.distanceFromStart > _maxDistance) {
@@ -58,6 +85,9 @@ class AStar {
             _validatePath(node);
             return;
         }
+
+        // On ajoute les noeuds adjacents
+        _addAdjacentNodes(node, state);
     }
 
     void _sortToVisit(const State& state) {
@@ -84,6 +114,10 @@ class AStar {
     bool _sortcompare(const Node& a, const Node& b) {
         // TODO: Distance de l'objectif !
         return a.distanceFromStart < b.distanceFromStart;
+    }
+
+    bool _isLocationValid(const Location& location, const State& state){
+        return true;
     }
 
     void _validatePath(Node& node) {
