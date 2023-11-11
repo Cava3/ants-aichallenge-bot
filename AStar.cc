@@ -58,8 +58,35 @@ class AStar {
 
             // Je vois si je peux m'y déplacer
             if(_isLocationValid(adjacentLocation, state)) {
-                //TODO: HARD : Voir le repassage sur Node avec la liste _visited
                 Node adjacentNode = Node(adjacentLocation);
+
+                // Je vois si je l'ai déjà visité
+                std::vector<Node>::iterator it = std::find(_visited.begin(), _visited.end(), adjacentNode);
+                if(it != _visited.end()) {
+                    // On regarde si on a trouvé un chemin plus court
+                    if(it->distanceFromStart > node.distanceFromStart + 1) {
+                        it->distanceFromStart = node.distanceFromStart + 1;
+                        it->previousNode = previousNode;
+                        _toVisit.push_back(*it);
+                        _visited.erase(it);
+                    }
+                    continue;
+                }
+                // FIXME: Code doublé
+                // FIXME: Trop d'iendentation, mise en fonction
+
+                // Je vois si je l'ai déjà ajouté à la liste à visiter
+                it = std::find(_toVisit.begin(), _toVisit.end(), adjacentNode);
+                if(it != _toVisit.end()) {
+                    // On regarde si on a trouvé un chemin plus court
+                    if(it->distanceFromStart > node.distanceFromStart + 1) {
+                        it->distanceFromStart = node.distanceFromStart + 1;
+                        it->previousNode = previousNode;
+                        // Vu que je modifie directement l'objet dans la liste, pas besoin de le réajouter
+                    }
+                    continue;
+                }
+
                 adjacentNode.previousNode = previousNode;
                 adjacentNode.distanceFromStart = node.distanceFromStart + 1;
                 _toVisit.push_back(adjacentNode);
