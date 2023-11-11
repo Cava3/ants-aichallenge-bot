@@ -2,6 +2,8 @@
 
 #include "Bot.h"
 #include "Timer.h"
+#include "AStar.hh"
+
 
 using namespace std;
 

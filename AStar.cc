@@ -8,13 +8,17 @@
     class for finding a path between two locations on the game map.
 */
 class AStar {
-    std::vector<Node> _path;
     std::vector<Node> _toVisit;
     std::vector<Node> _visited;
+    std::vector<Node> _path;
+    Location _endLocation;
+    State _state;
     int _maxDistance;
+
 
     AStar() {
         _reset();
+        _state = State();
     }
     ~AStar(){}
 
@@ -32,6 +36,9 @@ class AStar {
 
     void pathfind(const State& state, const Location& start, const Location& end){
         _reset();
+        _endLocation = end;
+        // _state = state; // BUG: Ne compile pas. Il faut trouver un moyen pour le test de distance
+        // XXX: On peut tenter de voler la fonction de distance de State (par référence ou cp cl)
 
         Node startNode = Node(start);
         startNode.distanceFromStart = 0;
@@ -39,7 +46,7 @@ class AStar {
 
         _pathfindLoop(state, end);
     }
-    
+
     void reset() {
         _reset();
     }
@@ -72,8 +79,9 @@ class AStar {
                     }
                     continue;
                 }
+
                 // FIXME: Code doublé
-                // FIXME: Trop d'iendentation, mise en fonction
+                // FIXME: Trop d'iendentation => mise en fonction
 
                 // Je vois si je l'ai déjà ajouté à la liste à visiter
                 it = std::find(_toVisit.begin(), _toVisit.end(), adjacentNode);
@@ -132,13 +140,15 @@ class AStar {
         }
     }
 
+    // Fonction de reset entre deux pathfind
     void _reset(){
         _path.clear();
         _toVisit.clear();
         _maxDistance = 9999999;
+        _endLocation = Location();
     }
 
-    bool _sortcompare(const Node& a, const Node& b) {
+    static bool _sortcompare(const Node& a, const Node& b) {
         // TODO: Distance de l'objectif !
         return a.distanceFromStart < b.distanceFromStart;
     }
@@ -147,10 +157,11 @@ class AStar {
         return true;
     }
 
+    // Fonction qui génère le chemin à partir du noeud final
     void _validatePath(Node& node) {
         _path.clear();
         while(node.previousNode != NULL) {
-            _path.push_back(node);
+            _path.push_back(node); // XXX: Le chemin commence par la fin !
             node = *node.previousNode;
         }
     }
