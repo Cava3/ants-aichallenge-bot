@@ -65,4 +65,4 @@ inline Bug& operator<<(Bug &bug, const T &t)
     return bug;
 };
 
-#endif //BUG_H_
+#endif
