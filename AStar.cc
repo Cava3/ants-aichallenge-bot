@@ -4,6 +4,7 @@
 #include "State.h"
 #include "Node.hh"
 
+using namespace std;
 /*
     class for finding a path between two locations on the game map.
 */
@@ -14,11 +15,11 @@ class AStar {
     Location _endLocation;
     State _state;
     int _maxDistance;
+    int _rows, _cols;
 
 
     AStar() {
         _reset();
-        _state = State();
     }
     ~AStar(){}
 
@@ -28,8 +29,9 @@ class AStar {
 
     std::vector<Location> getPath() {
         std::vector<Location> path;
-        for(int i=0; i<(int)_path.size(); i++) {
-            path.push_back(_path[i].location);
+        // Penser à retourner le chemin dans le bon sens
+        for(std::vector<Node>::iterator it = _path.begin(); it != _path.end(); ++it) {
+            path.push_back(it->location);
         }
         return path;
     }
@@ -110,7 +112,7 @@ class AStar {
         _visited.push_back(node);
 
         // Si la distance est trop grande, on arrête
-        if(node.distanceFromStart > _maxDistance) {
+        if(node.distanceFromStart + _distanceToEnd(node.location) > _maxDistance) {
             return;
         }
 
@@ -146,14 +148,24 @@ class AStar {
         _toVisit.clear();
         _maxDistance = 9999999;
         _endLocation = Location();
+        _state = State();
+        _rows = _state.rows;
+        _cols = _state.cols;
     }
 
-    static bool _sortcompare(const Node& a, const Node& b) {
-        // TODO: Distance de l'objectif !
-        return a.distanceFromStart < b.distanceFromStart;
+    bool _sortcompare(const Node& a, const Node& b) {
+        return _distanceToEnd(a.location) < _distanceToEnd(b.location);
     }
 
     bool _isLocationValid(const Location& location, const State& state){
+        // LA Location doit être dans la grille
+        if(location.row < 0 || location.row >= state.rows || location.col < 0 || location.col >= state.cols)
+            return false;
+        
+        // La Location ne doit pas être de l'eau
+        if(state.grid[location.row][location.col].isWater)
+            return false;
+
         return true;
     }
 
@@ -166,4 +178,12 @@ class AStar {
         }
     }
 
+    double _distanceToEnd(const Location &loc1) { // Volé depuis State
+        Location loc2 = _endLocation;
+        int d1 = abs(loc1.row-loc2.row),
+            d2 = abs(loc1.col-loc2.col),
+            dr = min(d1, _rows-d1),
+            dc = min(d2, _cols-d2);
+        return sqrt(dr*dr + dc*dc);
+    };
 };
