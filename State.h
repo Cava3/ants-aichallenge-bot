@@ -50,7 +50,6 @@ struct State
         Functions
     */
     State();
-    // ~State();
 
     void setup();
     void reset();

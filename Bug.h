@@ -22,17 +22,7 @@ struct Bug
 {
     std::ofstream file;
 
-    Bug()
-    {
-
-    };
-
-    ~Bug()
-    {
-        #ifdef DEBUG
-            file.close();
-        #endif
-    };
+    Bug() {};
 
     //opens the specified file
     inline void open(const std::string &filename)
