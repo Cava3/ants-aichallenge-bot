@@ -13,7 +13,6 @@ class AStar {
     std::vector<Node> _visited;
     std::vector<Node> _path;
     Location _endLocation;
-    State _state;
     int _maxDistance;
     int _rows, _cols;
 
@@ -39,8 +38,8 @@ class AStar {
     void pathfind(const State& state, const Location& start, const Location& end){
         _reset();
         _endLocation = end;
-        // _state = state; // BUG: Ne compile pas. Il faut trouver un moyen pour le test de distance
-        // XXX: On peut tenter de voler la fonction de distance de State (par référence ou cp cl)
+        _rows = state.rows;
+        _cols = state.cols;
 
         Node startNode = Node(start);
         startNode.distanceFromStart = 0;
@@ -146,11 +145,11 @@ class AStar {
     void _reset(){
         _path.clear();
         _toVisit.clear();
+        _visited.clear();
         _maxDistance = 9999999;
         _endLocation = Location();
-        _state = State();
-        _rows = _state.rows;
-        _cols = _state.cols;
+        _rows = 0;
+        _cols = 0;
     }
 
     bool _sortcompare(const Node& a, const Node& b) {
@@ -173,7 +172,7 @@ class AStar {
     void _validatePath(Node& node) {
         _path.clear();
         while(node.previousNode != NULL) {
-            _path.push_back(node); // XXX: Le chemin commence par la fin !
+            _path.push_back(node); // Le chemin commence par la fin, on l'inverse à la récupération.
             node = *node.previousNode;
         }
     }
