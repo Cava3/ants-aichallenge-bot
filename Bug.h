@@ -27,6 +27,13 @@ struct Bug
 
     };
 
+    ~Bug()
+    {
+        #ifdef DEBUG
+            file.close();
+        #endif
+    };
+
     //opens the specified file
     inline void open(const std::string &filename)
     {

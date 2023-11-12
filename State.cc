@@ -10,12 +10,6 @@ State::State()
     bug.open("./debug.txt");
 };
 
-// //deconstructor
-// State::~State()
-// {
-//     bug.close();
-// };
-
 //sets the state up
 void State::setup()
 {
