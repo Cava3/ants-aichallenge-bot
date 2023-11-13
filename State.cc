@@ -2,7 +2,7 @@
 
 using namespace std;
 
-int GLOBAL_STATE_ROWS, GLOBAL_STATE_COLS;
+int GLOBAL_STATE_ROWS, GLOBAL_STATE_COLS; // FIXME: Dégueu
 
 //constructor
 State::State()

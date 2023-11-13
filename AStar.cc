@@ -177,9 +177,11 @@ class AStar {
         }
     }
 
+    // TODO: Disclaimer de pourquoi c'est le bordel avec des variables globales, ou nettoyer
+
     static double _distanceToEnd(const Node& node1) { // Volé depuis State
         Location loc1 = node1.location;
-        Location loc2 = node1.destination;            // TODO: _endLocation doit être stocké dans un `Node` (remplacer l'argument)
+        Location loc2 = node1.destination;
         int d1 = abs(loc1.row-loc2.row),
             d2 = abs(loc1.col-loc2.col),
             dr = min(d1, GLOBAL_STATE_ROWS-d1),
