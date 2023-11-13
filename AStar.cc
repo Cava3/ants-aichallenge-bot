@@ -41,7 +41,7 @@ class AStar {
         _rows = state.rows;
         _cols = state.cols;
 
-        Node startNode = Node(start);
+        Node startNode = Node(start, end);
         startNode.distanceFromStart = 0;
         _toVisit.push_back(startNode);
 
@@ -66,7 +66,7 @@ class AStar {
 
             // Je vois si je peux m'y déplacer
             if(_isLocationValid(adjacentLocation, state)) {
-                Node adjacentNode = Node(adjacentLocation);
+                Node adjacentNode = Node(adjacentLocation, _endLocation);
 
                 // Je vois si je l'ai déjà visité
                 std::vector<Node>::iterator it = std::find(_visited.begin(), _visited.end(), adjacentNode);
@@ -127,7 +127,7 @@ class AStar {
     }
 
     void _sortToVisit(const State& state) {
-        std::sort(_toVisit.begin(), _toVisit.end(), _sortcompare); // TODO: _sortcompare doit être `static`
+        std::sort(_toVisit.begin(), _toVisit.end(), _sortcompare);
     }
 
     void _pathfindLoop(const State& state, const Location& end) {
@@ -152,8 +152,8 @@ class AStar {
         _cols = 0;
     }
 
-    bool _sortcompare(const Node& a, const Node& b) {
-        return _distanceToEnd(a.location) < _distanceToEnd(b.location); // TODO: _distanceToEnd doit être `static`
+    static bool _sortcompare(const Node& a, const Node& b) {
+        return _distanceToEnd(a) < _distanceToEnd(b);
     }
 
     bool _isLocationValid(const Location& location, const State& state){
@@ -177,12 +177,13 @@ class AStar {
         }
     }
 
-    double _distanceToEnd(const Location &loc1) { // Volé depuis State // TODO: _distanceToEnd doit être `static`
-        Location loc2 = _endLocation;             // TODO: _endLocation doit être stocké dans un `Node` (remplacer l'argument)
+    static double _distanceToEnd(const Node& node1) { // Volé depuis State
+        Location loc1 = node1.location;
+        Location loc2 = node1.destination;            // TODO: _endLocation doit être stocké dans un `Node` (remplacer l'argument)
         int d1 = abs(loc1.row-loc2.row),
             d2 = abs(loc1.col-loc2.col),
-            dr = min(d1, _rows-d1),
-            dc = min(d2, _cols-d2);
+            dr = min(d1, GLOBAL_STATE_ROWS-d1),
+            dc = min(d2, GLOBAL_STATE_COLS-d2);
         return sqrt(dr*dr + dc*dc);
     };
 };

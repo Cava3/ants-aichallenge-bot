@@ -2,6 +2,8 @@
 
 using namespace std;
 
+int GLOBAL_STATE_ROWS, GLOBAL_STATE_COLS;
+
 //constructor
 State::State()
 {
@@ -167,10 +169,14 @@ istream& operator>>(istream &is, State &state)
                 is >> state.loadtime;
             else if(inputType == "turntime")
                 is >> state.turntime;
-            else if(inputType == "rows")
+            else if(inputType == "rows") {
                 is >> state.rows;
-            else if(inputType == "cols")
+                GLOBAL_STATE_ROWS = state.rows; // FIXME: Degueu
+            }
+            else if(inputType == "cols") {
                 is >> state.cols;
+                GLOBAL_STATE_COLS = state.cols; // FIXME: Degueu
+            }
             else if(inputType == "turns")
                 is >> state.turns;
             else if(inputType == "player_seed")

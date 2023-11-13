@@ -23,6 +23,8 @@ const int TDIRECTIONS = 4;
 const char CDIRECTIONS[4] = {'N', 'E', 'S', 'W'};
 const int DIRECTIONS[4][2] = { {-1, 0}, {0, 1}, {1, 0}, {0, -1} };      //{N, E, S, W}
 
+extern int GLOBAL_STATE_ROWS, GLOBAL_STATE_COLS; // FIXME: Trouver une meilleure solution pour la comparaison dans AStar.cc
+
 /*
     struct to store current state information
 */
