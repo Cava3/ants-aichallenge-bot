@@ -127,7 +127,7 @@ class AStar {
     }
 
     void _sortToVisit(const State& state) {
-        std::sort(_toVisit.begin(), _toVisit.end(), _sortcompare); // include <algorithm>
+        std::sort(_toVisit.begin(), _toVisit.end(), _sortcompare); // TODO: _sortcompare doit être `static`
     }
 
     void _pathfindLoop(const State& state, const Location& end) {
@@ -153,7 +153,7 @@ class AStar {
     }
 
     bool _sortcompare(const Node& a, const Node& b) {
-        return _distanceToEnd(a.location) < _distanceToEnd(b.location);
+        return _distanceToEnd(a.location) < _distanceToEnd(b.location); // TODO: _distanceToEnd doit être `static`
     }
 
     bool _isLocationValid(const Location& location, const State& state){
@@ -177,8 +177,8 @@ class AStar {
         }
     }
 
-    double _distanceToEnd(const Location &loc1) { // Volé depuis State
-        Location loc2 = _endLocation;
+    double _distanceToEnd(const Location &loc1) { // Volé depuis State // TODO: _distanceToEnd doit être `static`
+        Location loc2 = _endLocation;             // TODO: _endLocation doit être stocké dans un `Node` (remplacer l'argument)
         int d1 = abs(loc1.row-loc2.row),
             d2 = abs(loc1.col-loc2.col),
             dr = min(d1, _rows-d1),
