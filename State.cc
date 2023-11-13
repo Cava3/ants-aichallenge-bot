@@ -2,7 +2,7 @@
 
 using namespace std;
 
-int GLOBAL_STATE_ROWS, GLOBAL_STATE_COLS; // FIXME: Dégueu
+int GLOBAL_STATE_ROWS, GLOBAL_STATE_COLS; // FIXME: Glob Var = dégueu
 
 //constructor
 State::State()
@@ -171,11 +171,11 @@ istream& operator>>(istream &is, State &state)
                 is >> state.turntime;
             else if(inputType == "rows") {
                 is >> state.rows;
-                GLOBAL_STATE_ROWS = state.rows; // FIXME: Degueu
+                GLOBAL_STATE_ROWS = state.rows; // FIXME: Glob Var = dégueu
             }
             else if(inputType == "cols") {
                 is >> state.cols;
-                GLOBAL_STATE_COLS = state.cols; // FIXME: Degueu
+                GLOBAL_STATE_COLS = state.cols; // FIXME: Glob Var = dégueu
             }
             else if(inputType == "turns")
                 is >> state.turns;
