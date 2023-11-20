@@ -12,16 +12,17 @@
 class AStar {
     private :
         std::vector<Node> _toVisit;
+        std::vector<Node> _visited;
         std::vector<Node> _path;
+        Location _endLocation;
         int _maxDistance;
+        int _rows, _cols;
 
         bool _isLocationValid(const Location& location, const State& state);
         void _addAdjacentNodes(Node& node, const State& state);
-        static bool _sortcompare(const Node& a, const Node& b);
         void _visitNode(Node& node, const State& state);
         static double _distanceToEnd(const Node& node);
         void _pathfindLoop(const State& state);
-        void _sortToVisit(const State& state);
         void _validatePath(Node& node);
         void _reset();
 

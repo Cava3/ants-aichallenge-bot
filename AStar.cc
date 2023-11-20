@@ -114,7 +114,7 @@ class AStar {
         _visited.push_back(node);
 
         // Si la distance est trop grande, on arrête
-        if(node.distanceFromStart + _distanceToEnd(node.location) > _maxDistance) {
+        if(_getNodeScore(node, state) > _maxDistance) {
             return;
         }
 
@@ -129,19 +129,30 @@ class AStar {
         _addAdjacentNodes(node, state);
     }
 
-    void _sortToVisit(const State& state) {
-        std::sort(_toVisit.begin(), _toVisit.end(), _sortcompare);
-    }
-
     void _pathfindLoop(const State& state, const Location& end) {
         while(!_toVisit.empty()) {
-            // On trie
-            _sortToVisit(state);
+            // On récupère le meilleur noeud à visiter
+            Node bestNode = _getBestFromList(state);
 
             // On choisis le noeud à visiter et on le visite
-            Node node = _toVisit.back();
-            _visitNode(node, state, end);
+            _visitNode(bestNode, state, end);
         }
+    }
+
+    // Retourne le meilleur noeud à visiter
+    Node _getBestFromList(const State& state) {
+        Node bestNode = _toVisit[0];
+        for(std::vector<Node>::iterator it = _toVisit.begin(); it != _toVisit.end(); ++it) {
+            if(_getNodeScore(*it, state) < _getNodeScore(bestNode, state)) {
+                bestNode = *it;
+            }
+        }
+        return bestNode;
+    }
+
+    // Retourne le score d'un noeud
+    double _getNodeScore(const Node& node, const State& state) {
+        return node.distanceFromStart + _distanceToEnd(node, state);
     }
 
     // Fonction de reset entre deux pathfind
@@ -153,10 +164,6 @@ class AStar {
         _endLocation = Location();
         _rows = 0;
         _cols = 0;
-    }
-
-    static bool _sortcompare(const Node& a, const Node& b) {
-        return _distanceToEnd(a) < _distanceToEnd(b);
     }
 
     bool _isLocationValid(const Location& location, const State& state){
@@ -180,15 +187,13 @@ class AStar {
         }
     }
 
-    // TODO: Disclaimer de pourquoi c'est le bordel avec des variables globales, ou nettoyer
-
-    static double _distanceToEnd(const Node& node1) { // Volé depuis State
+    double _distanceToEnd(const Node& node1, const State& state) { // Volé depuis State
         Location loc1 = node1.location;
         Location loc2 = node1.destination;
         int d1 = abs(loc1.row-loc2.row),
             d2 = abs(loc1.col-loc2.col),
-            dr = min(d1, GLOBAL_STATE_ROWS-d1),
-            dc = min(d2, GLOBAL_STATE_COLS-d2);
+            dr = min(d1, state.rows-d1),
+            dc = min(d2, state.cols-d2);
         return sqrt(dr*dr + dc*dc);
     };
 };
