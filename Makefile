@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=-O3 -funroll-loops -c
 LDFLAGS=-O2 -lm
-SOURCES=Bot.cc MyBot.cc State.cc AStar.cc
+SOURCES=$(wildcard *.cc)
 OBJECTS=$(addsuffix .o, $(basename ${SOURCES}))
 EXECUTABLE=Bot
 
