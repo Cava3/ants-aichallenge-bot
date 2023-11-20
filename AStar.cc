@@ -130,6 +130,9 @@ class AStar {
     }
 
     void _sortToVisit(const State& state) {
+        // FIXME: NE PAS SORT !!!
+        // BUG
+        // TODO
         std::sort(_toVisit.begin(), _toVisit.end(), _sortcompare);
     }
 
