@@ -7,7 +7,7 @@
 
 using namespace std;
 
-int selectDirection(int ant, State& ref_state, double timeLimit);
+int selectDirection(int ant, const State& state, double timeLimit);
 
 //constructor
 Bot::Bot()
@@ -39,6 +39,7 @@ void Bot::makeMoves() {
 
     // Pour chaque fourmi (son index dans la liste)
     for(int ant=0; ant<(int)state.myAnts.size(); ant++) {
+        // TODO: Timer failsafe
         double timePerAnt = state.turntime/(int)state.myAnts.size();
         int direction = selectDirection(ant, state, timePerAnt);
         state.makeMove(state.myAnts[ant], direction);
@@ -58,7 +59,7 @@ void Bot::endTurn()
 };
 
 
-int selectDirection(int ant, State& ref_state, double timeLimit){
+int selectDirection(int ant, const State& state, double timeLimit){
     // De quoi s'assurer qu'on ne timeout pas
     Timer timer = Timer();
     timer.start();
@@ -70,21 +71,19 @@ int selectDirection(int ant, State& ref_state, double timeLimit){
     // Algo de choix de direction
     do {
         direction = rand() % 4;
-        nLoc = ref_state.getLocation(ref_state.myAnts[ant], direction);
+        nLoc = state.getLocation(state.myAnts[ant], direction);
 
-        ref_state.bug << timer.getTime() << "ms < " << timeLimit << "ms" << endl;
+        // const_cast car l'opérateur << n'est pas const
+        const_cast<State&>(state).bug << timer.getTime() << "ms < " << timeLimit << "ms" << endl;
     } while (
         timer.getTime() < timeLimit &&
-        (
-            ref_state.grid[nLoc.row][nLoc.col].isWater ||
-            ref_state.grid[nLoc.row][nLoc.col].ant != -1 ||
-            ref_state.grid[nLoc.row][nLoc.col].hillPlayer == 0
+        (   // Condition de non-validation du mouvement :
+            state.grid[nLoc.row][nLoc.col].isWater ||       // Il y a de l'eau
+            state.grid[nLoc.row][nLoc.col].ant != -1 ||     // Il y a une fourmi
+            state.grid[nLoc.row][nLoc.col].hillPlayer == 0  // C'est notre fourmilière
         )
     );
-    // Condition de non-validation du mouvement :
-    // Il y a de l'eau
-    // Il y a une fourmi
-    // C'est notre fourmilière
+    
     
     return direction;
 }
