@@ -32,5 +32,4 @@
 *.app
 
 # Environnement
-Makefile
 .vscode
