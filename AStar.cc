@@ -26,6 +26,7 @@ class AStar {
     //##           Fonctions publiques d'intéraction avec le module           ##
     //==========================================================================
 
+    // Retourne le chemin calculé
     std::vector<Location> getPath() {
         std::vector<Location> path;
         // Penser à retourner le chemin dans le bon sens
@@ -35,6 +36,7 @@ class AStar {
         return path;
     }
 
+    // Lance le pathfind dans le contexte de `state`, de `start` à `end`
     void pathfind(const State& state, const Location& start, const Location& end){
         _reset();
         _endLocation = end;
@@ -48,6 +50,7 @@ class AStar {
         _pathfindLoop(state, end);
     }
 
+    // Remet à 0 le calculateur. Est appelé automatiquement par `pathfind`
     void reset() {
         _reset();
     }
