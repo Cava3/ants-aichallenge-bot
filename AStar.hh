@@ -12,8 +12,11 @@
 class AStar {
     private :
         std::vector<Node> _toVisit;
+        std::vector<Node> _visited;
         std::vector<Node> _path;
+        Location _endLocation;
         int _maxDistance;
+        int _rows, _cols;
 
         bool _isLocationValid(const Location& location, const State& state);
         void _addAdjacentNodes(Node& node, const State& state);
