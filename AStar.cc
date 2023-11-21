@@ -126,6 +126,9 @@ void AStar::_pathfindLoop(const State& state, const Location& end) {
         // On récupère le meilleur noeud à visiter
         Node bestNode = _getBestFromList(state);
 
+        // On supprime le noeud de la liste
+        _toVisit.erase(std::find(_toVisit.begin(), _toVisit.end(), bestNode));
+        
         // On choisis le noeud à visiter et on le visite
         _visitNode(bestNode, state, end);
     }
