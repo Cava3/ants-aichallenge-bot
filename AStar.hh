@@ -24,8 +24,8 @@ class AStar {
         void _pathfindLoop(const State& state, const Location& end);
         double _getNodeScore(const Node& node, const State& state);
         void _addAdjacentNodes(Node& node, const State& state);
+        void _validatePath(Node& node, const State& state);
         Node _getBestFromList(const State& state);
-        void _validatePath(Node& node);
         void _reset();
 
     public :

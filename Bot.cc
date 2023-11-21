@@ -72,7 +72,7 @@ int selectDirection(int ant, const State& state, double timeLimit){
     const_cast<State&>(state).bug << "Time taken: " << timer.getTime() << "ms" << endl;
 
     // On pathfind vers 0,0
-    pathfinder.pathfind(state, state.myAnts[ant], Location(0,0));
+    pathfinder.pathfind(state, state.myAnts[ant], Location(9,70));
     vector<Location> path = pathfinder.getPath();
     nLoc = path[0];
 

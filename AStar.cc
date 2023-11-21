@@ -51,6 +51,51 @@ void AStar::reset() {
 //##                    Fonctions privées utilitaires                     ##
 //==========================================================================
 
+
+void AStar::_pathfindLoop(const State& state, const Location& end) {
+    while(!_toVisit.empty()) {
+        const_cast<State&>(state).bug << "0" << endl;
+
+        // On récupère le meilleur noeud à visiter
+        Node bestNode = _getBestFromList(state);
+
+        const_cast<State&>(state).bug << "1" << endl;
+
+        // On choisis le noeud à visiter et on le visite
+        _visitNode(bestNode, state, end);
+
+        const_cast<State&>(state).bug << "2" << endl;
+    }
+}
+
+void AStar::_visitNode(Node& node, const State& state, const Location& end) {
+    // On valide la visite du noeud
+    node.explored = true;
+    const_cast<State&>(state).bug << "2.0" << endl;
+    _toVisit.erase(std::find(_toVisit.begin(), _toVisit.end(), node));
+    _visited.push_back(node);
+
+    const_cast<State&>(state).bug << "2.1" << endl;
+
+    // Si la distance est trop grande, on arrête
+    if(_getNodeScore(node, state) > _maxDistance) {
+        return;
+    }
+
+    // Si on est arrivé à la fin, on arrête
+    if(node.location == end) {
+        const_cast<State&>(state).bug << "On est à la fin" << endl;
+        const_cast<State&>(state).bug << &node << " | " << node.previousNode << endl;
+        _maxDistance = node.distanceFromStart;
+        _validatePath(node, state);
+        return;
+    }
+
+    const_cast<State&>(state).bug << "2.2" << endl;
+    // On ajoute les noeuds adjacents
+    _addAdjacentNodes(node, state);
+}
+
 void AStar::_addAdjacentNodes(Node& node, const State& state) {
     Location location = node.location;
     Node* previousNode = &node;
@@ -58,10 +103,14 @@ void AStar::_addAdjacentNodes(Node& node, const State& state) {
     for(int d=0; d<TDIRECTIONS; d++) {
         // Je créer une Location à partir de la direction
         Location adjacentLocation = state.getLocation(location, d);
-
+        const_cast<State&>(state).bug << "2.2.0" << endl;
         // Je vois si je peux m'y déplacer
         if(_isLocationValid(adjacentLocation, state)) {
             Node adjacentNode = Node(adjacentLocation, _endLocation);
+
+            if(_getNodeScore(node, state) > _maxDistance) {
+                continue;
+            }
 
             // Je vois si je l'ai déjà visité
             std::vector<Node>::iterator it = std::find(_visited.begin(), _visited.end(), adjacentNode);
@@ -72,6 +121,7 @@ void AStar::_addAdjacentNodes(Node& node, const State& state) {
                     it->previousNode = previousNode;
                     _toVisit.push_back(*it);
                     _visited.erase(it);
+                    const_cast<State&>(state).bug << "2.2.1" << endl;
                 }
                 continue;
             }
@@ -87,50 +137,20 @@ void AStar::_addAdjacentNodes(Node& node, const State& state) {
                     it->distanceFromStart = node.distanceFromStart + 1;
                     it->previousNode = previousNode;
                     // Vu que je modifie directement l'objet dans la liste, pas besoin de le réajouter
+                    const_cast<State&>(state).bug << "2.2.2" << endl;
                 }
                 continue;
             }
 
+            const_cast<State&>(state).bug << "2.2.3" << endl;
             adjacentNode.previousNode = previousNode;
             adjacentNode.distanceFromStart = node.distanceFromStart + 1;
+
+            const_cast<State&>(state).bug << adjacentNode.location.col << " ; " << adjacentNode.previousNode->location.col << endl;
+
             _toVisit.push_back(adjacentNode);
+            const_cast<State&>(state).bug << "2.2.4" << endl;
         }
-    }
-}
-
-
-void AStar::_visitNode(Node& node, const State& state, const Location& end) {
-    // On valide la visite du noeud
-    node.explored = true;
-    _toVisit.pop_back();
-    _visited.push_back(node);
-
-    // Si la distance est trop grande, on arrête
-    if(_getNodeScore(node, state) > _maxDistance) {
-        return;
-    }
-
-    // Si on est arrivé à la fin, on arrête
-    if(node.location == end) {
-        _maxDistance = node.distanceFromStart;
-        _validatePath(node);
-        return;
-    }
-
-    // On ajoute les noeuds adjacents
-    _addAdjacentNodes(node, state);
-}
-
-void AStar::_pathfindLoop(const State& state, const Location& end) {
-    while(!_toVisit.empty()) {
-        // On récupère le meilleur noeud à visiter
-        Node bestNode = _getBestFromList(state);
-
-        // On supprime le noeud de la liste
-        _toVisit.erase(std::find(_toVisit.begin(), _toVisit.end(), bestNode));
-        
-        // On choisis le noeud à visiter et on le visite
-        _visitNode(bestNode, state, end);
     }
 }
 
@@ -165,7 +185,7 @@ bool AStar::_isLocationValid(const Location& location, const State& state){
     // LA Location doit être dans la grille
     if(location.row < 0 || location.row >= state.rows || location.col < 0 || location.col >= state.cols)
         return false;
-    
+
     // La Location ne doit pas être de l'eau
     if(state.grid[location.row][location.col].isWater)
         return false;
@@ -174,11 +194,14 @@ bool AStar::_isLocationValid(const Location& location, const State& state){
 }
 
 // Fonction qui génère le chemin à partir du noeud final
-void AStar::_validatePath(Node& node) {
+void AStar::_validatePath(Node& node, const State& state) {
+    Node* currentNode = &node;
     _path.clear();
-    while(node.previousNode != NULL) {
-        _path.push_back(node); // Le chemin commence par la fin, on l'inverse à la récupération.
-        node = *node.previousNode;
+    while(currentNode->previousNode != NULL) {
+        _path.push_back(*currentNode); // Le chemin commence par la fin, on l'inverse à la récupération.
+        currentNode = currentNode->previousNode;
+        const_cast<State&>(state).bug << node.location.col << " ; " << node.previousNode->location.col << endl;
+        const_cast<State&>(state).bug << currentNode << endl;
     }
 }
 
