@@ -69,31 +69,19 @@ int selectDirection(int ant, const State& state, double timeLimit){
     Location nLoc;
     int direction;
 
-    // Algo de choix de direction
-    do {
-        // On pathfind vers 0,0
-        pathfinder.pathfind(state, state.myAnts[ant], Location(0,0));
-        vector<Location> path = pathfinder.getPath();
-        nLoc = path[0];
+    const_cast<State&>(state).bug << "Time taken: " << timer.getTime() << "ms" << endl;
 
-        // On détermine la direction en fonction de la position
-        for(direction=0; direction<TDIRECTIONS; direction++) {
-            if(state.getLocation(state.myAnts[ant], direction) == nLoc) {
-                break;
-            }
+    // On pathfind vers 0,0
+    pathfinder.pathfind(state, state.myAnts[ant], Location(0,0));
+    vector<Location> path = pathfinder.getPath();
+    nLoc = path[0];
+
+    // On détermine la direction en fonction de la position
+    for(direction=0; direction<TDIRECTIONS; direction++) {
+        if(state.getLocation(state.myAnts[ant], direction) == nLoc) {
+            break;
         }
+    }
 
-    } while (
-        timer.getTime() < timeLimit &&
-        (   // Condition de non-validation du mouvement :
-            state.grid[nLoc.row][nLoc.col].isWater ||       // Il y a de l'eau
-            state.grid[nLoc.row][nLoc.col].ant != -1 ||     // Il y a une fourmi
-            state.grid[nLoc.row][nLoc.col].hillPlayer == 0  // C'est notre fourmilière
-        )
-    );
-    
-    
     return direction;
 }
-
-

@@ -32,7 +32,7 @@ class AStar {
         AStar();
 
         std::vector<Location> getPath();
-        void pathfind(const State& state, const Location& start, const Location& end) {}
+        void pathfind(const State& state, const Location& start, const Location& end);
         void reset();
 };
 
