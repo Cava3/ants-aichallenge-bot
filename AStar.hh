@@ -18,20 +18,21 @@ class AStar {
         int _maxDistance;
         int _rows, _cols;
 
+        void _visitNode(Node& node, const State& state, const Location& end);
         bool _isLocationValid(const Location& location, const State& state);
+        double _distanceToEnd(const Node& node1, const State& state);
+        void _pathfindLoop(const State& state, const Location& end);
+        double _getNodeScore(const Node& node, const State& state);
         void _addAdjacentNodes(Node& node, const State& state);
-        void _visitNode(Node& node, const State& state);
-        static double _distanceToEnd(const Node& node);
-        void _pathfindLoop(const State& state);
+        Node _getBestFromList(const State& state);
         void _validatePath(Node& node);
         void _reset();
 
     public :
         AStar();
-        ~AStar();
 
         std::vector<Location> getPath();
-        void pathfind(State state, const Location& start, const Location& end) {}
+        void pathfind(const State& state, const Location& start, const Location& end) {}
         void reset();
 };
 
