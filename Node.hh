@@ -17,7 +17,7 @@ struct Node
     Node(Location location)
     {
         explored = false;
-        distanceFromStart = 9999999;
+        distanceFromStart = 0;
         previousNode = NULL;
         this->location = location;
     };
@@ -25,7 +25,7 @@ struct Node
     Node(Location location, Location destination)
     {
         explored = false;
-        distanceFromStart = 9999999;
+        distanceFromStart = 0;
         previousNode = NULL;
         this->location = location;
         this->destination = destination;
@@ -33,7 +33,7 @@ struct Node
 
     void reset()
     {
-        distanceFromStart = 9999999;
+        distanceFromStart = 0;
     };
 
     bool operator==(const Node& other) const

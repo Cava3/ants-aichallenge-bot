@@ -65,17 +65,18 @@ void AStar::_pathfindLoop(const State& state, const Location& end) {
         _visitNode(bestNode, state, end);
 
         const_cast<State&>(state).bug << "2" << endl;
+        const_cast<State&>(state).bug << _toVisit.size() << endl;
     }
 }
 
 void AStar::_visitNode(Node& node, const State& state, const Location& end) {
     // On valide la visite du noeud
     node.explored = true;
-    const_cast<State&>(state).bug << "2.0" << endl;
+    const_cast<State&>(state).bug << "1.0" << endl;
     _toVisit.erase(std::find(_toVisit.begin(), _toVisit.end(), node));
     _visited.push_back(node);
 
-    const_cast<State&>(state).bug << "2.1" << endl;
+    const_cast<State&>(state).bug << "1.1" << endl;
 
     // Si la distance est trop grande, on arrête
     if(_getNodeScore(node, state) > _maxDistance) {
@@ -91,7 +92,7 @@ void AStar::_visitNode(Node& node, const State& state, const Location& end) {
         return;
     }
 
-    const_cast<State&>(state).bug << "2.2" << endl;
+    const_cast<State&>(state).bug << "1.2" << endl;
     // On ajoute les noeuds adjacents
     _addAdjacentNodes(node, state);
 }
@@ -99,18 +100,25 @@ void AStar::_visitNode(Node& node, const State& state, const Location& end) {
 void AStar::_addAdjacentNodes(Node& node, const State& state) {
     Location location = node.location;
     Node* previousNode = &node;
+    const_cast<State&>(state).bug << previousNode << endl;
 
     for(int d=0; d<TDIRECTIONS; d++) {
         // Je créer une Location à partir de la direction
         Location adjacentLocation = state.getLocation(location, d);
-        const_cast<State&>(state).bug << "2.2.0" << endl;
+        const_cast<State&>(state).bug << "1.2.0" << endl;
         // Je vois si je peux m'y déplacer
         if(_isLocationValid(adjacentLocation, state)) {
+            // BUG: ICI EST LE PROBLEME
+            // BUG: adjacentNode est désalloué en sortie de scope
             Node adjacentNode = Node(adjacentLocation, _endLocation);
+            const_cast<State&>(state).bug << &adjacentNode << endl;
 
-            if(_getNodeScore(node, state) > _maxDistance) {
+            if(_getNodeScore(adjacentNode, state) > _maxDistance) {
                 continue;
             }
+
+            const_cast<State&>(state).bug << previousNode << endl;
+            const_cast<State&>(state).bug << "1.2.1" << endl;
 
             // Je vois si je l'ai déjà visité
             std::vector<Node>::iterator it = std::find(_visited.begin(), _visited.end(), adjacentNode);
@@ -142,14 +150,12 @@ void AStar::_addAdjacentNodes(Node& node, const State& state) {
                 continue;
             }
 
-            const_cast<State&>(state).bug << "2.2.3" << endl;
+            const_cast<State&>(state).bug << "1.2.3" << endl;
             adjacentNode.previousNode = previousNode;
             adjacentNode.distanceFromStart = node.distanceFromStart + 1;
 
-            const_cast<State&>(state).bug << adjacentNode.location.col << " ; " << adjacentNode.previousNode->location.col << endl;
-
             _toVisit.push_back(adjacentNode);
-            const_cast<State&>(state).bug << "2.2.4" << endl;
+            const_cast<State&>(state).bug << "1.2.4" << endl;
         }
     }
 }
@@ -197,8 +203,8 @@ bool AStar::_isLocationValid(const Location& location, const State& state){
 void AStar::_validatePath(Node& node, const State& state) {
     Node* currentNode = &node;
     _path.clear();
-    while(currentNode->previousNode != NULL) {
-        _path.push_back(*currentNode); // Le chemin commence par la fin, on l'inverse à la récupération.
+    while(currentNode->distanceFromStart > 0) {
+        _path.push_back(*currentNode); // Le chemin commence par la fin, on l'inversera à la récupération.
         currentNode = currentNode->previousNode;
         const_cast<State&>(state).bug << node.location.col << " ; " << node.previousNode->location.col << endl;
         const_cast<State&>(state).bug << currentNode << endl;
