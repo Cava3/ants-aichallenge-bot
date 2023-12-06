@@ -35,7 +35,8 @@ void AStar::pathfind(const State& state, const Location& start, const Location& 
     _endLocation = end;
     _rows = state.rows;
     _cols = state.cols;
-    _maxDistance = _rows + _cols;
+    _maxDistance = 2* (int) const_cast<State&>(state).distance(start, end);
+     
 
     Node* startNode = _createNode(start, end);
     startNode->distanceFromStart = 0;
