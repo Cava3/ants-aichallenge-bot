@@ -73,8 +73,9 @@ int Bot::selectDirection(int ant, const State& state, double timeLimit){
     int direction;
 
 
-    // On pathfind vers 0,0
-    pathfinder.pathfind(state, state.myAnts[ant], Location(51,65));
+    // On pathfind vers la nourriture la plus proche
+    Location closestFood = findClosestFood(ant, state);
+    pathfinder.pathfind(state, state.myAnts[ant], closestFood);
     vector<Location> path = pathfinder.getPath();
 
     if(path.size() == 0) {
@@ -97,4 +98,28 @@ int Bot::selectDirection(int ant, const State& state, double timeLimit){
     const_cast<State&>(state).bug << "ant " << ant << " goes " << direction << endl;
 
     return direction;
+}
+
+Location Bot::findClosestFood(int ant, const State& state){
+    // TODO : calculer la distance en fonction du AStar, pas à vol d'oiseau
+    Location closestFood = state.food[0];
+
+    for(int i = 1; i < state.food.size(); i++){
+        int antPosCol = state.myAnts[ant].col;
+        int antPosRow = state.myAnts[ant].row;
+        int currentFoodDistance = (
+            abs(closestFood.col - antPosCol) +
+            abs(closestFood.row - antPosRow)
+            );
+        int newFoodDistance = (
+            abs(state.food[i].col - antPosCol) +
+            abs(state.food[i].row - antPosRow)
+            );
+        
+        if (newFoodDistance < currentFoodDistance){
+            closestFood = state.food[i];
+        }
+    }
+
+    return closestFood;
 }
