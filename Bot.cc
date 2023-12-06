@@ -7,8 +7,6 @@
 
 using namespace std;
 
-int selectDirection(int ant, const State& state, double timeLimit);
-
 //constructor
 Bot::Bot()
 {
@@ -42,6 +40,13 @@ void Bot::makeMoves() {
         // TODO: Timer failsafe
         double timePerAnt = state.turntime/(int)state.myAnts.size();
         int direction = selectDirection(ant, state, timePerAnt);
+
+        if(direction == -1) {
+            const_cast<State&>(state).bug << "ant " << ant << " goes nowhere" << endl;
+            continue;
+        }
+
+        const_cast<State&>(state).bug << "ant " << ant << " goes " << direction << endl;
         state.makeMove(state.myAnts[ant], direction);
     }
 
@@ -59,7 +64,7 @@ void Bot::endTurn()
 };
 
 
-int selectDirection(int ant, const State& state, double timeLimit){
+int Bot::selectDirection(int ant, const State& state, double timeLimit){
     // De quoi s'assurer qu'on ne timeout pas
     Timer timer = Timer();
     timer.start();
@@ -69,19 +74,30 @@ int selectDirection(int ant, const State& state, double timeLimit){
     Location nLoc;
     int direction;
 
-    const_cast<State&>(state).bug << "Time taken: " << timer.getTime() << "ms" << endl;
 
     // On pathfind vers 0,0
-    pathfinder.pathfind(state, state.myAnts[ant], Location(9,70));
+    pathfinder.pathfind(state, state.myAnts[ant], Location(0,0));
     vector<Location> path = pathfinder.getPath();
+
+    if(path.size() == 0) {
+        const_cast<State&>(state).bug << "/!\\ Empty path" << endl;
+        return -1;
+    }
+
     nLoc = path[0];
+    const_cast<State&>(state).bug << "Time taken: " << timer.getTime() << "ms" << endl;
 
     // On détermine la direction en fonction de la position
     for(direction=0; direction<TDIRECTIONS; direction++) {
-        if(state.getLocation(state.myAnts[ant], direction) == nLoc) {
+        Location lookingLocation = state.getLocation(state.myAnts[ant], direction);
+        const_cast<State&>(state).bug << "lookingLocation: " << lookingLocation.col << "," << lookingLocation.row << endl;
+        const_cast<State&>(state).bug << "nLoc: " << nLoc.col << "," << nLoc.row << endl;
+        if(lookingLocation == nLoc) {
             break;
         }
     }
+
+    const_cast<State&>(state).bug << "ant " << ant << " goes " << direction << endl;
 
     return direction;
 }

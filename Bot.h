@@ -29,9 +29,9 @@ struct Bot
     Bot();
 
     void playGame();    //plays a single game of Ants
-
     void makeMoves();   //makes moves for a single turn
     void endTurn();     //indicates to the engine that it has made its moves
+    int selectDirection(int ant, const State& state, double timeLimit); // Fonction de sélection de direction
 };
 
 #endif //BOT_H_
