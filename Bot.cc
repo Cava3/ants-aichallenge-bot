@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <cmath>
 
 #include "Bot.h"
 #include "AStar.hh"
@@ -72,9 +73,9 @@ int Bot::selectDirection(int ant, const State& state, double timeLimit){
     Location nLoc;
     int direction;
 
-
-    // On pathfind vers 0,0
-    pathfinder.pathfind(state, state.myAnts[ant], Location(51,65));
+    // On pathfind vers la nourriture la plus proche
+    Location closestFood = findClosestFood(ant, state);
+    pathfinder.pathfind(state, state.myAnts[ant], closestFood);
     vector<Location> path = pathfinder.getPath();
 
     if(path.size() == 0) {
@@ -97,4 +98,27 @@ int Bot::selectDirection(int ant, const State& state, double timeLimit){
     const_cast<State&>(state).bug << "ant " << ant << " goes " << direction << endl;
 
     return direction;
+}
+
+Location Bot::findClosestFood(int ant, const State& state){
+    Location closestFood = state.food[0];
+
+    for(int i = 1; i < state.food.size(); i++){
+        int antPosCol = state.myAnts[ant].col;
+        int antPosRow = state.myAnts[ant].row;
+        int currentFoodDistance = (
+            pow((abs(closestFood.col - antPosCol)), 2) +
+            pow((abs(closestFood.row - antPosRow)), 2)
+            );
+        int newFoodDistance = (
+            pow((abs(state.food[i].col - antPosCol)), 2) +
+            pow((abs(state.food[i].row - antPosRow)), 2)
+            );
+        
+        if (newFoodDistance < currentFoodDistance){
+            closestFood = state.food[i];
+        }
+    }
+
+    return closestFood;
 }
