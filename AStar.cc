@@ -35,14 +35,14 @@ void AStar::pathfind(const State& state, const Location& start, const Location& 
     _endLocation = end;
     _rows = state.rows;
     _cols = state.cols;
-    _maxDistance = 8 * (int) const_cast<State&>(state).distance(start, end); // Arbitraire
+    _maxDistance = 6 * (int) state.distance(start, end); // Arbitraire
      
 
     Node* startNode = _createNode(start, end);
     startNode->distanceFromStart = 0;
     _toVisit.push_back(startNode);
 
-    if(start == end) {
+    if(start == end || !_isLocationValid(end, state)) {
         _validatePath(startNode);
         return;
     }
@@ -192,8 +192,8 @@ bool AStar::_isLocationValid(const Location& location, const State& state){
     if(location.row < 0 || location.row >= state.rows || location.col < 0 || location.col >= state.cols)
         return false;
 
-    // La Location ne doit pas être de l'eau
-    if(state.grid[location.row][location.col].isWater)
+    // La Location ne doit pas être de l'eau ni notre propre fourmi
+    if(state.grid[location.row][location.col].isWater || state.grid[location.row][location.col].ant == 0)
         return false;
 
     return true;
