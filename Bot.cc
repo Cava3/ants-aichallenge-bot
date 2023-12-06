@@ -74,7 +74,7 @@ int Bot::selectDirection(int ant, const State& state, double timeLimit){
 
 
     // On pathfind vers 0,0
-    pathfinder.pathfind(state, state.myAnts[ant], Location(0,0));
+    pathfinder.pathfind(state, state.myAnts[ant], Location(51,65));
     vector<Location> path = pathfinder.getPath();
 
     if(path.size() == 0) {
