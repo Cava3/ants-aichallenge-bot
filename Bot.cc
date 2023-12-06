@@ -1,7 +1,6 @@
 #include <stdlib.h>
 
 #include "Bot.h"
-#include "Timer.h"
 #include "AStar.hh"
 
 
@@ -40,7 +39,6 @@ void Bot::makeMoves() {
 
     // Pour chaque fourmi (son index dans la liste)
     for(int ant=0; ant<(int)state.myAnts.size(); ant++) {
-        // TODO: Timer failsafe
         double timePerAnt = state.turntime/(int)state.myAnts.size();
         int direction = selectDirection(ant, state, timePerAnt);
 
@@ -68,9 +66,6 @@ void Bot::endTurn()
 
 
 int Bot::selectDirection(int ant, const State& state, double timeLimit){
-    // De quoi s'assurer qu'on ne timeout pas
-    Timer timer = Timer();
-    timer.start();
 
     // Variables pour la direction et la destination
     AStar pathfinder = AStar();
@@ -88,7 +83,6 @@ int Bot::selectDirection(int ant, const State& state, double timeLimit){
     }
 
     nLoc = path[0];
-    const_cast<State&>(state).bug << "Time taken: " << timer.getTime() << "ms" << endl;
 
     // On détermine la direction en fonction de la position
     for(direction=0; direction<TDIRECTIONS; direction++) {

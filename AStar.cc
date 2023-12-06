@@ -61,6 +61,7 @@ void AStar::reset() {
 
 
 void AStar::_pathfindLoop(const State& state, const Location& end) {
+    // TODO: Timer failsafe
     while(!_toVisit.empty()) {
         const_cast<State&>(state).bug << "On loop" << endl;
 
