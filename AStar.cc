@@ -35,7 +35,7 @@ void AStar::pathfind(const State& state, const Location& start, const Location& 
     _endLocation = end;
     _rows = state.rows;
     _cols = state.cols;
-    _maxDistance = 2* (int) const_cast<State&>(state).distance(start, end); // Arbitraire
+    _maxDistance = 8 * (int) const_cast<State&>(state).distance(start, end); // Arbitraire
      
 
     Node* startNode = _createNode(start, end);
@@ -61,6 +61,7 @@ void AStar::reset() {
 
 
 void AStar::_pathfindLoop(const State& state, const Location& end) {
+    // TODO: Timer failsafe
     while(!_toVisit.empty()) {
         const_cast<State&>(state).bug << "On loop" << endl;
 

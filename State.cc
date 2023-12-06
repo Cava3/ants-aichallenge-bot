@@ -104,6 +104,24 @@ void State::updateVisionInformation()
     }
 };
 
+// Puts back remembered waters on the map
+void State::addFromMemory() {
+    for(std::vector<Location>::iterator it = waters.begin(); it != waters.end(); ++it) {
+        grid[it->row][it->col].isWater = true;
+    }
+}
+
+// Remembers the waters from the map
+void State::updateMemory() {
+    for(int row=0; row<rows; row++) {
+        for(int col=0; col<cols; col++) {
+            if(grid[row][col].isWater) {
+                waters.push_back(Location(row, col));
+            }
+        }
+    }
+}
+
 /*
     This is the output function for a state. It will add a char map
     representation of the state to the output stream passed to it.
