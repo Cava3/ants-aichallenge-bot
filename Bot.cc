@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <cmath>
 
 #include "Bot.h"
 #include "AStar.hh"
@@ -101,18 +100,19 @@ int Bot::selectDirection(int ant, const State& state, double timeLimit){
 }
 
 Location Bot::findClosestFood(int ant, const State& state){
+    // TODO : calculer la distance en fonction du AStar, pas à vol d'oiseau
     Location closestFood = state.food[0];
 
     for(int i = 1; i < state.food.size(); i++){
         int antPosCol = state.myAnts[ant].col;
         int antPosRow = state.myAnts[ant].row;
         int currentFoodDistance = (
-            pow((abs(closestFood.col - antPosCol)), 2) +
-            pow((abs(closestFood.row - antPosRow)), 2)
+            abs(closestFood.col - antPosCol) +
+            abs(closestFood.row - antPosRow)
             );
         int newFoodDistance = (
-            pow((abs(state.food[i].col - antPosCol)), 2) +
-            pow((abs(state.food[i].row - antPosRow)), 2)
+            abs(state.food[i].col - antPosCol) +
+            abs(state.food[i].row - antPosRow)
             );
         
         if (newFoodDistance < currentFoodDistance){
