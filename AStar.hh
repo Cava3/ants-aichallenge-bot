@@ -11,16 +11,11 @@
 */
 class AStar {
     private :
-        // // TODO: Passage en pointeurs... :skull:
         std::vector<Node*> _toVisit;
         std::vector<Node*> _visited;
         std::vector<Node*> _path;
         std::vector<Node*> _every_node_ever_created;
-
-        // OLD
-        // std::vector<Node> _toVisit;
-        // std::vector<Node> _visited;
-        // std::vector<Node> _path;
+        
         Location _endLocation;
         int _maxDistance;
         int _rows, _cols;
