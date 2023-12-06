@@ -42,6 +42,7 @@ struct State
 
     std::vector<std::vector<Square> > grid;
     std::vector<Location> myAnts, enemyAnts, myHills, enemyHills, food;
+    std::vector<Location> waters;
 
     Timer timer;
     Bug bug;
@@ -60,6 +61,8 @@ struct State
     Location getLocation(const Location &startLoc, int direction) const;
 
     void updateVisionInformation();
+    void addFromMemory();
+    void updateMemory();
 };
 
 std::ostream& operator<<(std::ostream &os, const State &state);

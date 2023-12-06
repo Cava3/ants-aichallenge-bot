@@ -25,6 +25,9 @@ void Bot::playGame()
     while(cin >> state)
     {
         state.updateVisionInformation();
+        state.addFromMemory();
+        state.updateMemory();
+
         makeMoves();
         endTurn();
     }
