@@ -57,7 +57,7 @@ struct State
 
     void makeMove(const Location &loc, int direction);
 
-    double distance(const Location &loc1, const Location &loc2);
+    double distance(const Location &loc1, const Location &loc2) const;
     Location getLocation(const Location &startLoc, int direction) const;
 
     void updateVisionInformation();

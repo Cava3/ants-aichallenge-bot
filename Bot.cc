@@ -72,6 +72,7 @@ int Bot::selectDirection(int ant, const State& state, double timeLimit){
     Location nLoc;
     int direction;
 
+
     // On pathfind vers la nourriture la plus proche
     Location closestFood = findClosestFood(ant, state);
     pathfinder.pathfind(state, state.myAnts[ant], closestFood);
