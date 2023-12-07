@@ -43,6 +43,7 @@ struct State
     std::vector<std::vector<Square> > grid;
     std::vector<Location> myAnts, enemyAnts, myHills, enemyHills, food;
     std::vector<Location> waters;
+    Location hills[4];
 
     Timer timer;
     Bug bug;
