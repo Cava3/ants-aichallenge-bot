@@ -1,6 +1,13 @@
 # ants-aichallenge-bot
 Bot expérimental pour le jeu http://ants.aichallenge.org/index.php
 
+# Bots gagnants
+ - #1 : [xathis](https://github.com/xathis/AI-Challenge-2011-bot) : [post mortem](https://web.archive.org/web/20160624203328/http://xathis.com/posts/ai-challenge-2011-ants.html)
+ - #2 : [GreenTea](https://sourceforge.net/projects/ants2011/) : [post mortem](https://web.archive.org/web/20120111120814/http://www.trevoroakes.com/blog/2011/12/23/greenteas-2nd-place-entry-postmortem-translated-by-hand/)
+ - #4 : runevision : [post mortem](https://blog.runevision.com/2011/12/ai-challenge-my-bot-explained-part-i.html)
+ - #8 : FlagCapper : [post mortem](https://web.archive.org/web/20131101052116/http://flagcapper.com/?c2) + [video](http://www.youtube.com/watch?v=vsbda_hL2Ro)
+ - #10 : Memetix : [post mortem](www.blackmoor.org.uk/AI.htm)
+
 # 4 phases de jeu :
 
 ## DISCOVERING :
