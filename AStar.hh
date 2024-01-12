@@ -1,10 +1,14 @@
-#ifndef ASTAR_HH_
-#define ASTAR_HH_
+#pragma once
 
 #include <vector>
 
-#include "State.h"
-#include "Node.hh"
+#include "Location.h"
+
+
+class Node;
+// class Location;
+class State;
+
 
 /*
     class for finding a path between two locations on the game map.
@@ -38,6 +42,3 @@ class AStar {
         void pathfind(const State& state, const Location& start, const Location& end);
         void reset();
 };
-
-
-#endif // ASTAR_HH_

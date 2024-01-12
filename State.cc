@@ -1,12 +1,23 @@
 #include "State.h"
+#include "Ant.h"
+#include "Bug.h"
+#include "Location.h"
+#include "Timer.h"
+#include "Square.h"
 
 using namespace std;
+
+
+// Forward declarations
+class Ant;
+
 
 //constructor
 State::State()
 {
     gameover = 0;
     turn = 0;
+    antsId = 0;
     bug.open("./debug.txt");
 };
 
@@ -77,7 +88,7 @@ void State::updateVisionInformation()
 
     for(int a=0; a<(int) myAnts.size(); a++)
     {
-        sLoc = myAnts[a];
+        sLoc = myAnts[a].getPosition();
         locQueue.push(sLoc);
 
         std::vector<std::vector<bool> > visited(rows, std::vector<bool>(cols, 0));
@@ -121,6 +132,7 @@ void State::updateMemory() {
         }
     }
 }
+
 
 /*
     This is the output function for a state. It will add a char map
@@ -237,8 +249,10 @@ istream& operator>>(istream &is, State &state)
             {
                 is >> row >> col >> player;
                 state.grid[row][col].ant = player;
-                if(player == 0)
-                    state.myAnts.push_back(Location(row, col));
+                if(player == 0) {
+                    state.antsId++;
+                    state.myAnts.push_back(Ant(state.antsId, Location(row, col)));
+                }
                 else
                     state.enemyAnts.push_back(Location(row, col));
             }

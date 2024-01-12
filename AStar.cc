@@ -1,9 +1,11 @@
 #include <vector>
 #include <algorithm>
 
-#include "State.h"
-#include "Node.hh"
 #include "AStar.hh"
+#include "Location.h"
+#include "Node.hh"
+#include "State.h"
+#include "Square.h"
 
 using namespace std;
 /*

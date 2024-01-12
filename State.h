@@ -13,8 +13,12 @@
 
 #include "Timer.h"
 #include "Bug.h"
-#include "Square.h"
-#include "Location.h"
+
+class Square;
+// class Bug;
+class Ant;
+class State;
+
 
 /*
     constants
@@ -33,7 +37,8 @@ struct State
     */
     int rows, cols,
         turn, turns,
-        noPlayers;
+        noPlayers,
+        antsId;
     double attackradius, spawnradius, viewradius;
     double loadtime, turntime;
     std::vector<double> scores;
@@ -41,8 +46,9 @@ struct State
     int64_t seed;
 
     std::vector<std::vector<Square> > grid;
-    std::vector<Location> myAnts, enemyAnts, myHills, enemyHills, food;
-    std::vector<Location> waters;
+    std::vector<Ant> myAnts;
+    std::vector<Location> enemyAnts, myHills, enemyHills, food, waters;
+    // std::vector<Location> waters;
 
     Timer timer;
     Bug bug;
