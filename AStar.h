@@ -1,6 +1,6 @@
 #pragma once
 
-// #include <vector>
+#include <vector>
 
 // #include "Location.h"
 
@@ -9,10 +9,10 @@
 
 // class Node;
 // class Location;
-// class State;
+class State;
 #include "Location.h"
 #include "Node.h"
-#include "State.h"
+// #include "State.h"
 
 
 /*

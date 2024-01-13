@@ -1,3 +1,5 @@
+#include <algorithm>
+
 // #include "Ant.h"
 // #include "Bug.h"
 // #include "Location.h"
@@ -57,8 +59,8 @@ double State::distance(const Location &loc1, const Location &loc2) const
 {
     int d1 = abs(loc1.row-loc2.row),
         d2 = abs(loc1.col-loc2.col),
-        dr = min(d1, rows-d1),
-        dc = min(d2, cols-d2);
+        dr = std::min(d1, rows-d1),
+        dc = std::min(d2, cols-d2);
     return sqrt(dr*dr + dc*dc);
 };
 

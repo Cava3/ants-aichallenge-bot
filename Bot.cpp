@@ -8,14 +8,11 @@
 // using namespace std;
 
 //constructor
-Bot::Bot()
-{
-
+Bot::Bot() {
 };
 
 //plays a single game of Ants.
-void Bot::playGame()
-{
+void Bot::playGame() {
     //reads the game parameters and sets up
     std::cin >> state;
     state.setup();

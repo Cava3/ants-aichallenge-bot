@@ -4,6 +4,7 @@ LDFLAGS=-O2 -lm
 SOURCES=$(wildcard *.cc)
 OBJECTS=$(addsuffix .o, $(basename ${SOURCES}))
 EXECUTABLE=Bot
+# OPTIONS=-municode
 
 #Uncomment the following to enable debugging
 #CFLAGS+=-g -DDEBUG
@@ -11,7 +12,7 @@ EXECUTABLE=Bot
 all: $(OBJECTS) $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+	$(CC) $(LDFLAGS) $(OBJECTS) -o $@ $(OPTIONS)
 
 .cc.o: *.h
 	$(CC) $(CFLAGS) $< -o $@

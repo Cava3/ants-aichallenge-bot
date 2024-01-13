@@ -1,0 +1,39 @@
+# Example mingw makefile
+
+TARGETNAME=MyBot
+
+CC = g++
+
+# A basic windows app (won't bring up a console window)
+CFLAGS = -Wall -O -Wl,--subsystem,windows
+
+# # for debugging make this a console app (so we can write to stdout/stderr) easily;
+# # turn off optimisations and include symbols to help with running in a debugger
+# CFLAGS_DEBUG = -Wall -O0 -g -Wl,--subsystem,console -DDEBUG
+
+# # Create a dll instead of an exe
+# CFLAGS_DLL = -Wall -O0 -g -shared -Wl,--subsystem,windows -DDLL
+
+# # Any libraries you need - in this case wininet for communicating to the internet
+# LIBS = -lwininet
+
+# # Strip the binary for our prod build
+# STRIP = i586-mingw32msvc-strip
+
+# # UPX pack to minimise size for our prod build
+# UPX=upx -9
+
+# # Leave symbols, turn off optimisation, and send output to console
+# debug: $(TARGETNAME).c
+#         $(CC) -o $(TARGETNAME)_dbg $(CFLAGS_DEBUG) $^ $(LIBS)
+
+# No debug symbols, debug statements removed, subsystem windows means we won't pop a window
+$(TARGETNAME): $(TARGETNAME).cpp
+		$(CC) -o $@ $(CFLAGS) $^ $(LIBS)
+
+$(TARGETNAME).dll: $(TARGETNAME).c
+		$(CC) -o $@ $(CFLAGS_DLL) $^ $(LIBS)
+
+release: $(TARGETNAME)
+		$(STRIP) $<
+		$(UPX) $<

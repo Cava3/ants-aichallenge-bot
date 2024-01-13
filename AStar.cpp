@@ -1,10 +1,10 @@
-// #include <vector>
-// #include <algorithm>
+#include <vector>
+#include <algorithm>
 
 #include "AStar.h"
 // #include "Location.h"
 // #include "Node.h"
-// #include "State.h"
+#include "State.h"
 #include "Square.h"
 
 // using namespace std;
@@ -83,8 +83,8 @@ void AStar::_pathfindLoop(const State& state, const Location& end) {
 void AStar::_visitNode(Node* node_ptr, const State& state, const Location& end) {
     // On valide la visite du noeud
     node_ptr->explored = true;
-    // _toVisit.erase(std::find(_toVisit.begin(), _toVisit.end(), node_ptr));
-    _toVisit.erase(find(_toVisit.begin(), _toVisit.end(), node_ptr));
+    _toVisit.erase(std::find(_toVisit.begin(), _toVisit.end(), node_ptr));
+    // _toVisit.erase(find(_toVisit.begin(), _toVisit.end(), node_ptr));
     _visited.push_back(node_ptr);
 
     // Si la distance est trop grande, on arrÃªte
@@ -222,8 +222,8 @@ double AStar::_distanceToEnd(const Node* node_ptr, const State& state) { // VolÃ
     Location loc2 = node_ptr->destination;
     int d1 = abs(loc1.row-loc2.row),
         d2 = abs(loc1.col-loc2.col),
-        dr = min(d1, state.rows-d1),
-        dc = min(d2, state.cols-d2);
+        dr = std::min(d1, state.rows-d1),
+        dc = std::min(d2, state.cols-d2);
     return sqrt(dr*dr + dc*dc);
 };
 
