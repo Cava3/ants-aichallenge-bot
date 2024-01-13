@@ -1,13 +1,14 @@
-#include <vector>
-#include <algorithm>
+// #include <vector>
+// #include <algorithm>
 
-#include "AStar.hh"
-#include "Location.h"
-#include "Node.hh"
-#include "State.h"
+#include "AStar.h"
+// #include "Location.h"
+// #include "Node.h"
+// #include "State.h"
 #include "Square.h"
 
-using namespace std;
+// using namespace std;
+
 /*
     class for finding a path between two locations on the game map.
 */
@@ -21,9 +22,12 @@ AStar::AStar() {
 //==========================================================================
 
 // Retourne le chemin calculé
+// std::vector<Location> AStar::getPath() {
+//     std::vector<Location> path;
 std::vector<Location> AStar::getPath() {
     std::vector<Location> path;
     // Penser à retourner le chemin dans le bon sens
+    // for(std::vector<Node*>::reverse_iterator it = _path.rbegin(); it != _path.rend(); ++it) {
     for(std::vector<Node*>::reverse_iterator it = _path.rbegin(); it != _path.rend(); ++it) {
         path.push_back((*it)->location);
     }
@@ -64,7 +68,7 @@ void AStar::reset() {
 
 void AStar::_pathfindLoop(const State& state, const Location& end) {
     while(!_toVisit.empty() && const_cast<State&>(state).timer.getTime() < state.turntime - 20) {
-        const_cast<State&>(state).bug << "On loop" << endl;
+        const_cast<State&>(state).bug << "On loop" << std::endl;
 
         // On récupère le meilleur noeud à visiter
         Node* bestNode = _getBestFromList(state);
@@ -72,14 +76,15 @@ void AStar::_pathfindLoop(const State& state, const Location& end) {
         // On choisis le noeud à visiter et on le visite
         _visitNode(bestNode, state, end);
 
-        const_cast<State&>(state).bug << "to visit : " << _toVisit.size() << endl;
+        const_cast<State&>(state).bug << "to visit : " << _toVisit.size() << std::endl;
     }
 }
 
 void AStar::_visitNode(Node* node_ptr, const State& state, const Location& end) {
     // On valide la visite du noeud
     node_ptr->explored = true;
-    _toVisit.erase(std::find(_toVisit.begin(), _toVisit.end(), node_ptr));
+    // _toVisit.erase(std::find(_toVisit.begin(), _toVisit.end(), node_ptr));
+    _toVisit.erase(find(_toVisit.begin(), _toVisit.end(), node_ptr));
     _visited.push_back(node_ptr);
 
     // Si la distance est trop grande, on arrête
@@ -89,7 +94,7 @@ void AStar::_visitNode(Node* node_ptr, const State& state, const Location& end) 
 
     // Si on est arrivé à la fin, on stock le chemin
     if(node_ptr->location == end) {
-        const_cast<State&>(state).bug << "On est à la fin" << endl;
+        const_cast<State&>(state).bug << "On est à la fin" << std::endl;
         _maxDistance = node_ptr->distanceFromStart;
         _validatePath(node_ptr);
         return;
@@ -103,7 +108,7 @@ void AStar::_addAdjacentNodes(Node* node_ptr, const State& state) {
     Location location = node_ptr->location;
     Node* previousNode = node_ptr;
 
-    const_cast<State&>(state).bug << "From : " << previousNode->location.col << "," << previousNode->location.row << endl;
+    const_cast<State&>(state).bug << "From : " << previousNode->location.col << "," << previousNode->location.row << std::endl;
     for(int d=0; d<TDIRECTIONS; d++) {
         // Je créer une Location à partir de la direction
         Location adjacentLocation = state.getLocation(location, d);
@@ -117,6 +122,7 @@ void AStar::_addAdjacentNodes(Node* node_ptr, const State& state) {
 
 
             // Je vois si je l'ai déjà visité
+            // std::vector<Node*>::iterator it;
             std::vector<Node*>::iterator it;
             bool trouve = false;
             for(it = _visited.begin(); it != _visited.end(); ++it) {
@@ -164,6 +170,7 @@ void AStar::_addAdjacentNodes(Node* node_ptr, const State& state) {
 // Retourne le meilleur noeud à visiter
 Node* AStar::_getBestFromList(const State& state) {
     Node* bestNode = _toVisit[0];
+    // for(std::vector<Node*>::iterator it = _toVisit.begin(); it != _toVisit.end(); ++it) {
     for(std::vector<Node*>::iterator it = _toVisit.begin(); it != _toVisit.end(); ++it) {
         if(_getNodeScore(*it, state) < _getNodeScore(bestNode, state)) {
             bestNode = *it;

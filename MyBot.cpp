@@ -1,6 +1,7 @@
+#include <iostream>
 #include "Bot.h"
 
-using namespace std;
+// using namespace std;
 
 /*
     This program will play a single game of Ants while communicating with
@@ -15,7 +16,7 @@ using namespace std;
 */
 int main(int argc, char *argv[])
 {
-    cout.sync_with_stdio(0); //this line makes your bot faster
+    std::cout.sync_with_stdio(0); //this line makes your bot faster
 
     Bot bot;
     bot.playGame();

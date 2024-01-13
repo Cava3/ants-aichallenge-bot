@@ -1,13 +1,18 @@
 #pragma once
 
-#include <vector>
+// #include <vector>
 
-#include "Location.h"
+// #include "Location.h"
+
+// using namespace std;
 
 
-class Node;
+// class Node;
 // class Location;
-class State;
+// class State;
+#include "Location.h"
+#include "Node.h"
+#include "State.h"
 
 
 /*
@@ -19,6 +24,10 @@ class AStar {
         std::vector<Node*> _visited;
         std::vector<Node*> _path;
         std::vector<Node*> _every_node_ever_created;
+        // std::vector<Node*> _toVisit;
+        // std::vector<Node*> _visited;
+        // std::vector<Node*> _path;
+        // std::vector<Node*> _every_node_ever_created;
         
         Location _endLocation;
         int _maxDistance;

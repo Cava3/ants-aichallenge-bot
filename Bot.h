@@ -1,7 +1,7 @@
-#ifndef BOT_H_
-#define BOT_H_
+#pragma once
 
-class State;
+// class State;
+#include "State.h"
 
 // Phases de jeu
 #define DISCOVERING 0
@@ -34,5 +34,3 @@ struct Bot
     // int selectDirection(int ant, const State& state, double timeLimit); // Fonction de sélection de direction
     // Location findClosestFood(int ant, const State& state);
 };
-
-#endif //BOT_H_

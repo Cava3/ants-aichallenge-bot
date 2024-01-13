@@ -1,14 +1,18 @@
 #pragma once
 
-using namespace std;
+// using namespace std;
 
-#include "AStar.hh"
-#include "Location.h"
+// #include "AStar.hh"
+// #include "Location.h"
 
 // Forward declarations
 // class AStar;
 // class Location;
 class State;
+#include "AStar.h"
+#include "Location.h"
+// #include "State.h"
+
 
 class Ant
 {
@@ -16,7 +20,7 @@ class Ant
         Location _position;
         Location _target;
         AStar _pathfinder;
-        vector<Location> _path;
+        std::vector<Location> _path;
 
     public:
         Ant(int id, Location location);

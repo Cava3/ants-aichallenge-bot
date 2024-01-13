@@ -1,5 +1,4 @@
-#ifndef BUG_H_
-#define BUG_H_
+#pragma once
 
 #include <fstream>
 
@@ -61,5 +60,3 @@ inline Bug& operator<<(Bug &bug, const T &t)
 
     return bug;
 };
-
-#endif

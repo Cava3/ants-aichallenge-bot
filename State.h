@@ -1,5 +1,4 @@
-#ifndef STATE_H_
-#define STATE_H_
+#pragma once
 
 #include <iostream>
 #include <stdio.h>
@@ -11,13 +10,18 @@
 #include <stack>
 #include <stdint.h>
 
-#include "Timer.h"
-#include "Bug.h"
 
-class Square;
+// class Ant;
 // class Bug;
-class Ant;
-class State;
+// class Location;
+// class Square;
+// class Timer;
+
+#include "Ant.h"
+#include "Bug.h"
+#include "Location.h"
+#include "Square.h"
+#include "Timer.h"
 
 
 /*
@@ -45,7 +49,7 @@ struct State
     bool gameover;
     int64_t seed;
 
-    std::vector<std::vector<Square> > grid;
+    std::vector<std::vector<Square>> grid;
     std::vector<Ant> myAnts;
     std::vector<Location> enemyAnts, myHills, enemyHills, food, waters;
     // std::vector<Location> waters;
@@ -73,5 +77,3 @@ struct State
 
 std::ostream& operator<<(std::ostream &os, const State &state);
 std::istream& operator>>(std::istream &is, State &state);
-
-#endif //STATE_H_

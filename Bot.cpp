@@ -1,11 +1,11 @@
 #include <stdlib.h>
 
 #include "Ant.h"
-#include "AStar.hh"
+#include "AStar.h"
 #include "Bot.h"
-#include "State.h"
+// #include "State.h"
 
-using namespace std;
+// using namespace std;
 
 //constructor
 Bot::Bot()
@@ -17,12 +17,12 @@ Bot::Bot()
 void Bot::playGame()
 {
     //reads the game parameters and sets up
-    cin >> state;
+    std::cin >> state;
     state.setup();
     endTurn();
 
     //continues making moves while the game is not over
-    while(cin >> state)
+    while(std::cin >> state)
     {
         state.updateVisionInformation();
         state.addFromMemory();
@@ -35,8 +35,8 @@ void Bot::playGame()
 
 //makes the bots moves for the turn
 void Bot::makeMoves() {
-    state.bug << "turn " << state.turn << ":" << endl;
-    state.bug << state << endl;
+    state.bug << "turn " << state.turn << ":" << std::endl;
+    state.bug << state << std::endl;
 
     // Pour chaque fourmi (son index dans la liste)
     for(int ant=0; ant<(int)state.myAnts.size(); ant++) {
@@ -53,7 +53,7 @@ void Bot::makeMoves() {
         // state.makeMove(state.myAnts[ant].getPosition(), direction);
     }
 
-    state.bug << "time taken: " << state.timer.getTime() << "ms" << endl << endl;
+    state.bug << "time taken: " << state.timer.getTime() << "ms" << std::endl << std::endl;
 };
 
 //finishes the turn
@@ -63,7 +63,7 @@ void Bot::endTurn()
         state.reset();
     state.turn++;
 
-    cout << "go" << endl;
+    std::cout << "go" << std::endl;
 };
 
 

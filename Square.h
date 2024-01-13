@@ -1,7 +1,8 @@
-#ifndef SQUARE_H_
-#define SQUARE_H_
+#pragma once
 
-#include <vector>
+// #include <vector>
+
+// using namespace std;
 
 /*
     struct for representing a square in the grid.
@@ -28,5 +29,3 @@ struct Square
         deadAnts.clear();
     };
 };
-
-#endif //SQUARE_H_

@@ -1,5 +1,4 @@
-#ifndef LOCATION_H_
-#define LOCATION_H_
+#pragma once
 
 /*
     struct for representing locations in the grid.
@@ -24,5 +23,3 @@ struct Location
         return row == other.row && col == other.col;
     }
 };
-
-#endif //LOCATION_H_

@@ -1,9 +1,10 @@
 #include "Ant.h"
-#include "AStar.hh"
-#include "Location.h"
-#include "State.h"
+// #include "AStar.h"
+// #include "Location.h"
+// #include "State.h"
 
-using namespace std;
+
+// using namespace std;
 
 
 Ant::Ant(int id, Location location) {
@@ -24,11 +25,11 @@ void Ant::playTurn(State& state, double timeLimit) {
     int direction = selectDirection(state, timeLimit);
 
     if(direction == -1) {
-        const_cast<State&>(state).bug << "ant " << id << " goes nowhere" << endl;
+        const_cast<State&>(state).bug << "ant " << id << " goes nowhere" << std::endl;
         return;
     }
 
-    const_cast<State&>(state).bug << "ant " << id << " goes " << direction << endl;
+    const_cast<State&>(state).bug << "ant " << id << " goes " << direction << std::endl;
     state.makeMove(_position, direction);
 }
 
@@ -52,7 +53,7 @@ int Ant::selectDirection(const State& state, double timeLimit) {
     // vector<Location> path = _pathfinder.getPath();
 
     if(_path.size() == 0) {
-        const_cast<State&>(state).bug << "/!\\ Empty path" << endl;
+        const_cast<State&>(state).bug << "/!\\ Empty path" << std::endl;
         return -1;
     }
 
@@ -61,14 +62,14 @@ int Ant::selectDirection(const State& state, double timeLimit) {
     // On détermine la direction en fonction de la position
     for(direction=0; direction<TDIRECTIONS; direction++) {
         Location lookingLocation = state.getLocation(_position, direction);
-        const_cast<State&>(state).bug << "lookingLocation: " << lookingLocation.col << "," << lookingLocation.row << endl;
-        const_cast<State&>(state).bug << "nLoc: " << nLoc.col << "," << nLoc.row << endl;
+        const_cast<State&>(state).bug << "lookingLocation: " << lookingLocation.col << "," << lookingLocation.row << std::endl;
+        const_cast<State&>(state).bug << "nLoc: " << nLoc.col << "," << nLoc.row << std::endl;
         if(lookingLocation == nLoc) {
             break;
         }
     }
 
-    const_cast<State&>(state).bug << "ant " << id << " goes " << direction << endl;
+    const_cast<State&>(state).bug << "ant " << id << " goes " << direction << std::endl;
 
     return direction;
 }

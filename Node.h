@@ -1,7 +1,12 @@
-#ifndef NODE_HH_
-#define NODE_HH_
+#pragma once
 
-#include "State.h"
+
+#include <stdio.h>
+
+
+#include "Location.h"
+// class Location;
+
 
 /*
     struct for representing a node in the AStar path.
@@ -41,5 +46,3 @@ struct Node
         return location == other.location && destination == other.destination;
     }
 };
-
-#endif //NODE_HH_

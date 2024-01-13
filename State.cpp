@@ -1,15 +1,12 @@
+// #include "Ant.h"
+// #include "Bug.h"
+// #include "Location.h"
+// #include "Square.h"
+// #include "Timer.h"
 #include "State.h"
-#include "Ant.h"
-#include "Bug.h"
-#include "Location.h"
-#include "Timer.h"
-#include "Square.h"
 
-using namespace std;
+// using namespace std;
 
-
-// Forward declarations
-class Ant;
 
 
 //constructor
@@ -24,7 +21,7 @@ State::State()
 //sets the state up
 void State::setup()
 {
-    grid = vector<vector<Square> >(rows, vector<Square>(cols, Square()));
+    grid = std::vector<std::vector<Square>>(rows, std::vector<Square>(cols, Square()));
 };
 
 //resets all non-water squares to land and clears the bots ant vector
@@ -44,7 +41,7 @@ void State::reset()
 //outputs move information to the engine
 void State::makeMove(const Location &loc, int direction)
 {
-    cout << "o " << loc.row << " " << loc.col << " " << CDIRECTIONS[direction] << endl;
+    std::cout << "o " << loc.row << " " << loc.col << " " << CDIRECTIONS[direction] << std::endl;
 
     Location nLoc = getLocation(loc, direction);
 
@@ -140,7 +137,7 @@ void State::updateMemory() {
 
     For example, you might call "cout << state << endl;"
 */
-ostream& operator<<(ostream &os, const State &state)
+std::ostream& operator<<(std::ostream &os, const State &state)
 {
     for(int row=0; row<state.rows; row++)
     {
@@ -159,17 +156,17 @@ ostream& operator<<(ostream &os, const State &state)
             else
                 os << '?';
         }
-        os << endl;
+        os << std::endl;
     }
 
     return os;
 };
 
 //input function
-istream& operator>>(istream &is, State &state)
+std::istream& operator>>(std::istream &is, State &state)
 {
     int row, col, player;
-    string inputType, junk;
+    std::string inputType, junk;
 
     //finds out which turn it is
     while(is >> inputType)
@@ -276,7 +273,7 @@ istream& operator>>(istream &is, State &state)
                 is >> state.noPlayers;
             else if(inputType == "scores") //score information
             {
-                state.scores = vector<double>(state.noPlayers, 0.0);
+                state.scores = std::vector<double>(state.noPlayers, 0.0);
                 for(int p=0; p<state.noPlayers; p++)
                     is >> state.scores[p];
             }
