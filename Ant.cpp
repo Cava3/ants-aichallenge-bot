@@ -17,6 +17,7 @@ Location Ant::getTarget() {
 }
 
 void Ant::playTurn(State& state, double timeLimit) {
+    const_cast<State&>(state).bug << "ant " << id << " is playing" << std::endl;
     int direction = selectDirection(state, timeLimit);
 
     if(direction == -1) {
