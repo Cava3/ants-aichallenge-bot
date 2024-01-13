@@ -2,12 +2,9 @@
 #include <algorithm>
 
 #include "AStar.h"
-// #include "Location.h"
-// #include "Node.h"
 #include "State.h"
 #include "Square.h"
 
-// using namespace std;
 
 /*
     class for finding a path between two locations on the game map.
@@ -22,12 +19,9 @@ AStar::AStar() {
 //==========================================================================
 
 // Retourne le chemin calculé
-// std::vector<Location> AStar::getPath() {
-//     std::vector<Location> path;
 std::vector<Location> AStar::getPath() {
     std::vector<Location> path;
     // Penser à retourner le chemin dans le bon sens
-    // for(std::vector<Node*>::reverse_iterator it = _path.rbegin(); it != _path.rend(); ++it) {
     for(std::vector<Node*>::reverse_iterator it = _path.rbegin(); it != _path.rend(); ++it) {
         path.push_back((*it)->location);
     }
@@ -84,7 +78,6 @@ void AStar::_visitNode(Node* node_ptr, const State& state, const Location& end) 
     // On valide la visite du noeud
     node_ptr->explored = true;
     _toVisit.erase(std::find(_toVisit.begin(), _toVisit.end(), node_ptr));
-    // _toVisit.erase(find(_toVisit.begin(), _toVisit.end(), node_ptr));
     _visited.push_back(node_ptr);
 
     // Si la distance est trop grande, on arrête
@@ -122,7 +115,6 @@ void AStar::_addAdjacentNodes(Node* node_ptr, const State& state) {
 
 
             // Je vois si je l'ai déjà visité
-            // std::vector<Node*>::iterator it;
             std::vector<Node*>::iterator it;
             bool trouve = false;
             for(it = _visited.begin(); it != _visited.end(); ++it) {
@@ -170,7 +162,6 @@ void AStar::_addAdjacentNodes(Node* node_ptr, const State& state) {
 // Retourne le meilleur noeud à visiter
 Node* AStar::_getBestFromList(const State& state) {
     Node* bestNode = _toVisit[0];
-    // for(std::vector<Node*>::iterator it = _toVisit.begin(); it != _toVisit.end(); ++it) {
     for(std::vector<Node*>::iterator it = _toVisit.begin(); it != _toVisit.end(); ++it) {
         if(_getNodeScore(*it, state) < _getNodeScore(bestNode, state)) {
             bestNode = *it;

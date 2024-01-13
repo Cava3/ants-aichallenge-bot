@@ -1,8 +1,5 @@
 #pragma once
 
-// #include <vector>
-
-// using namespace std;
 
 /*
     struct for representing a square in the grid.

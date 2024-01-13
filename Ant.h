@@ -1,17 +1,9 @@
 #pragma once
 
-// using namespace std;
-
-// #include "AStar.hh"
-// #include "Location.h"
-
-// Forward declarations
-// class AStar;
-// class Location;
-class State;
 #include "AStar.h"
 #include "Location.h"
-// #include "State.h"
+
+class State;
 
 
 class Ant

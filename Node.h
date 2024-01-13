@@ -1,11 +1,8 @@
 #pragma once
 
-
 #include <stdio.h>
 
-
 #include "Location.h"
-// class Location;
 
 
 /*

@@ -10,13 +10,6 @@
 #include <stack>
 #include <stdint.h>
 
-
-// class Ant;
-// class Bug;
-// class Location;
-// class Square;
-// class Timer;
-
 #include "Ant.h"
 #include "Bug.h"
 #include "Location.h"

@@ -1,6 +1,5 @@
 #pragma once
 
-// class State;
 #include "State.h"
 
 // Phases de jeu

@@ -1,14 +1,6 @@
 #include <algorithm>
 
-// #include "Ant.h"
-// #include "Bug.h"
-// #include "Location.h"
-// #include "Square.h"
-// #include "Timer.h"
 #include "State.h"
-
-// using namespace std;
-
 
 
 //constructor

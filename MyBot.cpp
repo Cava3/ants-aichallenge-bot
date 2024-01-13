@@ -1,7 +1,7 @@
 #include <iostream>
+
 #include "Bot.h"
 
-// using namespace std;
 
 /*
     This program will play a single game of Ants while communicating with

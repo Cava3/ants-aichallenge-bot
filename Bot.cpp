@@ -3,9 +3,7 @@
 #include "Ant.h"
 #include "AStar.h"
 #include "Bot.h"
-// #include "State.h"
 
-// using namespace std;
 
 //constructor
 Bot::Bot() {
