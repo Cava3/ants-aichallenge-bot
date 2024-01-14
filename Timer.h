@@ -1,13 +1,10 @@
 #pragma once
 
-// #include <sys/time.h>
-#include <ctime>
-
-
 /*
     struct for checking how long it has been since the start of the turn.
 */
 #ifdef _WIN32 //Windows timer (DON'T USE THIS TIMER UNLESS YOU'RE ON WINDOWS!)
+    #include <ctime>
     #include <io.h>
     #include <windows.h>
 
@@ -34,6 +31,7 @@
     };
 
 #else //Mac/Linux Timer
+    #include <sys/time.h>
     struct Timer
     {
         timeval timer;
