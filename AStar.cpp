@@ -220,6 +220,5 @@ double AStar::_distanceToEnd(const Node* node_ptr, const State& state) { // Vol√
 
 Node* AStar::_createNode(const Location& location, const Location& end) {
     Node* node_ptr = new Node(location, end);
-    _every_node_ever_created.push_back(node_ptr);
     return node_ptr;
 }
