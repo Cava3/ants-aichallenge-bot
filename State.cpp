@@ -110,14 +110,19 @@ void State::updateVisionInformation()
 // Puts back remembered waters on the map
 void State::addFromMemory() {
     for(std::vector<Location>::iterator it = waters.begin(); it != waters.end(); ++it)
-        grid[it->row][it->col].isWater = true;
+        if(!grid[it->row][it->col].isVisible)
+            grid[it->row][it->col].isWater = true;
 
     for(std::vector<Location>::iterator it = enemyHills.begin(); it != enemyHills.end(); ++it)
-        grid[it->row][it->col].isHill = true;
+        if(!grid[it->row][it->col].isVisible)
+            grid[it->row][it->col].isHill = true;
 }
 
 // Remembers the waters from the map
 void State::updateMemory() {
+    waters.clear();
+    enemyHills.clear();
+
     for(int row=0; row<rows; row++) {
         for(int col=0; col<cols; col++) {
             if(grid[row][col].isWater)
