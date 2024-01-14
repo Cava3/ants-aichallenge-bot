@@ -205,7 +205,45 @@ Location Ant::takeDecision(const State &state, double timeLimit)
         }
 
         // Si pas de nourriture, on attaque les nids
-        // TODO: Attaque des nids
+        // Attaque des nids
+        if(state.enemyHills.size() > 0) {
+            Location closestHill = state.enemyHills[0];
+            int closestHillDistance = state.distance(_position, closestHill);
+            for (int i = 0; i < state.enemyHills.size(); i++) {
+                int currentHillDistance = state.distance(_position, state.enemyHills[i]);
+                if (currentHillDistance < closestHillDistance) {
+                    closestHill = state.enemyHills[i];
+                    closestHillDistance = currentHillDistance;
+                }
+            }
+
+            if(_target == closestHill) {
+                _path.erase(_path.begin());
+                return _path[0];
+            } else {
+                setTarget(state, closestHill); // FIXME: Supprimer de la mémoire quand on a détruit le nid
+                return _path[0];
+            }
+        } else {
+            // Si pas de nids, on explore
+            // Si on est encore loin de la destination actuelle, on continue
+            if (_path.size() > 3) {
+                _path.erase(_path.begin());
+                return _path[0];
+            }
+
+            // Sinon on explore un autre endroit
+            Location randomLocation = Location(-1, -1);
+            while (randomLocation == Location(-1, -1)) {
+                int randomRow = _position.row + (rand() % 10) - 5;
+                int randomCol = _position.col + (rand() % 10) - 5;
+                if (!state.grid[randomRow][randomCol].isWater) { // TODO: Remplacer par isLocationValid
+                    randomLocation = Location(randomRow, randomCol);
+                }
+            }
+            setTarget(state, randomLocation);
+            return _path[0];
+        }
 
         break;
     default:
