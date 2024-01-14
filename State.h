@@ -50,7 +50,7 @@ struct State
     // std::vector<Ant> myAnts;
     std::vector<Location> myAnts;
     std::vector<Location> enemyAnts, myHills, enemyHills, food, waters;
-    // std::vector<Location> waters;
+    Location hills[4];
 
     Timer timer;
     Bug bug;
