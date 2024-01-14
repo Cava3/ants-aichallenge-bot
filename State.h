@@ -34,6 +34,7 @@ struct State
 {
     /*
         Variables
+        TODO: private and convention
     */
     int rows, cols,
         turn, turns,
@@ -44,7 +45,7 @@ struct State
     std::vector<double> scores;
     bool gameover;
     int64_t seed;
-    int playstyle;
+    int _playstyle;
 
     std::vector<std::vector<Square>> grid;
     // std::vector<Ant> myAnts;

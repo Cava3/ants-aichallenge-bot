@@ -134,11 +134,11 @@ void State::updateMemory() {
 // TODO: Anti-ghosting
 void State::updatePlaystyle() {
     if(myAnts.size() < 10) {
-        playstyle = PLAYSTYLE_FLEE;
+        _playstyle = PLAYSTYLE_FLEE;
     } else if(myAnts.size() < 20) {
-        playstyle = PLAYSTYLE_EAT;
+        _playstyle = PLAYSTYLE_EAT;
     } else {
-        playstyle = PLAYSTYLE_ANIHILATE;
+        _playstyle = PLAYSTYLE_ANIHILATE;
     }
 }
 
