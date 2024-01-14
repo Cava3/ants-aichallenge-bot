@@ -125,6 +125,18 @@ void State::updateMemory() {
     }
 }
 
+// Update playstyle
+// TODO: Anti-ghosting
+void State::updatePlaystyle() {
+    if(myAnts.size() < 10) {
+        playstyle = PLAYSTYLE_FLEE;
+    } else if(myAnts.size() < 20) {
+        playstyle = PLAYSTYLE_EAT;
+    } else {
+        playstyle = PLAYSTYLE_ANIHILATE;
+    }
+}
+
 
 /*
     This is the output function for a state. It will add a char map
@@ -284,6 +296,9 @@ std::istream& operator>>(std::istream &is, State &state)
             else //unknown line
                 getline(is, junk);
         }
+
+        // Update playstyle
+        state.updatePlaystyle();
     }
 
     return is;

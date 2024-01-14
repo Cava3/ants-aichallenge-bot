@@ -23,6 +23,9 @@ class Ant
         void playTurn(State& state, double timeLimit);
         int selectDirection(const State& state, double timeLimit);
         Location findClosestFood(const State& state);
+        Location takeDecision(const State& state, double timeLimit);
+        
+
 };
 
 

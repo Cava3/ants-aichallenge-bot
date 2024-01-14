@@ -36,24 +36,18 @@ void Ant::setTarget(const State& state, Location location) {
 }
 
 int Ant::selectDirection(const State& state, double timeLimit) {
-
-    // Variables pour la direction et la destination
-    // AStar pathfinder = AStar();
     Location nLoc;
     int direction;
 
 
-    // On pathfind vers la nourriture la plus proche
-    Location closestFood = findClosestFood(state);
-    // _pathfinder.pathfind(state, _position, closestFood);
-    // vector<Location> path = _pathfinder.getPath();
+    // On choisis quelle action faire
+    nLoc = takeDecision(state, timeLimit);
+    
 
     if(_path.size() == 0) {
         const_cast<State&>(state).bug << "/!\\ Empty path" << std::endl;
         return -1;
     }
-
-    nLoc = _path[0];
 
     // On détermine la direction en fonction de la position
     for(direction=0; direction<TDIRECTIONS; direction++) {
@@ -72,9 +66,10 @@ int Ant::selectDirection(const State& state, double timeLimit) {
 
 Location Ant::findClosestFood(const State& state){
     // TODO : calculer la distance en fonction du AStar, pas à vol d'oiseau
-    Location closestFood = state.food[0];
+    // Si pas de nourriture, on renvoie -1; -1
+    Location closestFood = Location(-1, -1);
 
-    for(int i = 1; i < state.food.size(); i++){
+    for(int i = 0; i < state.food.size(); i++){
         int antPosCol = _position.col;
         int antPosRow = _position.row;
         int currentFoodDistance = (
@@ -92,4 +87,9 @@ Location Ant::findClosestFood(const State& state){
     }
 
     return closestFood;
+}
+
+
+Location Ant::takeDecision(const State& state, double timeLimit) {
+    
 }
