@@ -97,14 +97,44 @@ Location Ant::findClosestFood(const State &state)
 
 Location Ant::takeDecision(const State &state, double timeLimit)
 {
-    Location nextLocation = Location(-1, -1);
-
     switch (state.playstyle)
     {
     // Style de jeu du début de partie
     // TODO : Fuir les ennemis ou chercher de la nourriture ou explorer
     case PLAYSTYLE_FLEE:
-        /* code */
+
+        // Si un ennemi est proche, on fuit
+        for (int i = 0; i < state.enemyAnts.size(); i++) {
+            if (state.distance(_position, state.enemyAnts[i]) < state.attackradius+2) {
+                // Différence de x et y pour trouver la direction de l'ennemi
+                int diffX = _position.col - state.enemyAnts[i].col;
+                int diffY = _position.row - state.enemyAnts[i].row;
+
+                // On trouve la Location opposée
+                Location oppositeLocation = Location(_position.row+diffY, _position.col+diffX);
+                if(state.grid[oppositeLocation.row][oppositeLocation.col].isWater) { // TODO: Remplacer par isLocationValid
+                    // Si on ne peut pas aller à l'endroit opposé, on essaye de pathfind en dehors de la vue.
+                    oppositeLocation = Location(_position.row+diffY*5, _position.col-diffX*5);
+                }
+
+                return oppositeLocation;
+            }
+        }
+
+        // Si pas d'ennemi proche, on cherche de la nourriture
+        Location closestFood = findClosestFood(state);
+        if (closestFood != Location(-1, -1)) {
+            if(_target != closestFood) {
+                setTarget(state, closestFood);
+                return _path[0];
+            } else {
+                _path.erase(_path.begin());
+                return _path[0];
+            }
+        }
+
+        // Si pas de nourriture, on explore
+        // TODO : Pathfind en dehors de la vue
         break;
 
     // Style de jeu du milieu de partie
@@ -122,5 +152,5 @@ Location Ant::takeDecision(const State &state, double timeLimit)
         break;
     }
 
-    return nextLocation;
+    return Location(-1, -1);
 }
