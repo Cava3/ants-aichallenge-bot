@@ -99,8 +99,8 @@ Location Ant::takeDecision(const State &state, double timeLimit)
 {
     switch (state.playstyle)
     {
-    // Style de jeu du début de partie
-    // TODO : Fuir les ennemis ou chercher de la nourriture ou explorer
+    // Style de jeu du début de partie (Moins de 10 fourmis)
+    // Fuir les ennemis ou chercher de la nourriture ou explorer
     case PLAYSTYLE_FLEE:
 
         // Si un ennemi est proche, on fuit
@@ -124,17 +124,33 @@ Location Ant::takeDecision(const State &state, double timeLimit)
         // Si pas d'ennemi proche, on cherche de la nourriture
         Location closestFood = findClosestFood(state);
         if (closestFood != Location(-1, -1)) {
-            if(_target != closestFood) {
-                setTarget(state, closestFood);
+            if(_target == closestFood) {
+                _path.erase(_path.begin());
                 return _path[0];
             } else {
-                _path.erase(_path.begin());
+                setTarget(state, closestFood);
                 return _path[0];
             }
         }
 
         // Si pas de nourriture, on explore
-        // TODO : Pathfind en dehors de la vue
+        // Si on est encore loin de la destination actuelle, on continue
+        if (_path.size() > 3) {
+            _path.erase(_path.begin());
+            return _path[0];
+        }
+
+        // Sinon on explore un autre endroit
+        Location randomLocation = Location(-1, -1);
+        while (randomLocation == Location(-1, -1)) {
+            int randomRow = _position.row + (rand() % 10) - 5;
+            int randomCol = _position.col + (rand() % 10) - 5;
+            if (!state.grid[randomRow][randomCol].isWater) { // TODO: Remplacer par isLocationValid
+                randomLocation = Location(randomRow, randomCol);
+            }
+        }
+        setTarget(state, randomLocation);
+        return _path[0];
         break;
 
     // Style de jeu du milieu de partie
