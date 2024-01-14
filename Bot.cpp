@@ -21,9 +21,10 @@ void Bot::playGame() {
     {
         state.updateVisionInformation();
         state.addFromMemory();
-        state.updateMemory();
 
         makeMoves();
+
+        state.updateMemory();
         endTurn();
     }
 };
