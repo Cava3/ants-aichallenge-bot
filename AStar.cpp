@@ -30,7 +30,7 @@ std::vector<Location> AStar::getPath() {
 }
 
 // Lance le pathfind dans le contexte de `state`, de `start` à `end`
-void AStar::pathfind(const State& state, const Location& start, const Location& end){
+void AStar::pathfind(State& state, const Location& start, const Location& end){
     _reset();
     _endLocation = end;
     _rows = state.rows;
@@ -42,7 +42,7 @@ void AStar::pathfind(const State& state, const Location& start, const Location& 
     startNode->distanceFromStart = 0;
     _toVisit.push_back(startNode);
 
-    if(start == end || !_isLocationValid(end, state)) {
+    if(start == end || !state.isLocationValid(end)) {
         _validatePath(startNode);
         return;
     }
@@ -60,9 +60,9 @@ void AStar::reset() {
 //==========================================================================
 
 
-void AStar::_pathfindLoop(const State& state, const Location& end) {
+void AStar::_pathfindLoop(State& state, const Location& end) {
     while(!_toVisit.empty() && const_cast<State&>(state).timer.getTime() < state.turntime - 20) {
-        const_cast<State&>(state).bug << "On loop" << std::endl;
+        // const_cast<State&>(state).bug << "On loop" << std::endl;
 
         // On récupère le meilleur noeud à visiter
         Node* bestNode = _getBestFromList(state);
@@ -70,11 +70,11 @@ void AStar::_pathfindLoop(const State& state, const Location& end) {
         // On choisis le noeud à visiter et on le visite
         _visitNode(bestNode, state, end);
 
-        const_cast<State&>(state).bug << "to visit : " << _toVisit.size() << std::endl;
+        // const_cast<State&>(state).bug << "to visit : " << _toVisit.size() << std::endl;
     }
 }
 
-void AStar::_visitNode(Node* node_ptr, const State& state, const Location& end) {
+void AStar::_visitNode(Node* node_ptr, State& state, const Location& end) {
     // On valide la visite du noeud
     node_ptr->explored = true;
     _toVisit.erase(std::find(_toVisit.begin(), _toVisit.end(), node_ptr));
@@ -87,7 +87,7 @@ void AStar::_visitNode(Node* node_ptr, const State& state, const Location& end) 
 
     // Si on est arrivé à la fin, on stock le chemin
     if(node_ptr->location == end) {
-        const_cast<State&>(state).bug << "On est à la fin" << std::endl;
+        // const_cast<State&>(state).bug << "On est à la fin" << std::endl;
         _maxDistance = node_ptr->distanceFromStart;
         _validatePath(node_ptr);
         return;
@@ -97,16 +97,16 @@ void AStar::_visitNode(Node* node_ptr, const State& state, const Location& end) 
     _addAdjacentNodes(node_ptr, state);
 }
 
-void AStar::_addAdjacentNodes(Node* node_ptr, const State& state) {
+void AStar::_addAdjacentNodes(Node* node_ptr, State& state) {
     Location location = node_ptr->location;
     Node* previousNode = node_ptr;
 
-    const_cast<State&>(state).bug << "From : " << previousNode->location.col << "," << previousNode->location.row << std::endl;
+    // const_cast<State&>(state).bug << "From : " << previousNode->location.col << "," << previousNode->location.row << std::endl;
     for(int d=0; d<TDIRECTIONS; d++) {
         // Je créer une Location à partir de la direction
         Location adjacentLocation = state.getLocation(location, d);
         // Je vois si je peux m'y déplacer
-        if(_isLocationValid(adjacentLocation, state)) {
+        if(state.isLocationValid(adjacentLocation)) {
             Node* adjacentNode_ptr = _createNode(adjacentLocation, _endLocation);
 
             if(_getNodeScore(adjacentNode_ptr, state) >= _maxDistance) {
@@ -184,18 +184,6 @@ void AStar::_reset(){
     _endLocation = Location();
     _rows = 0;
     _cols = 0;
-}
-
-bool AStar::_isLocationValid(const Location& location, const State& state){
-    // LA Location doit être dans la grille
-    if(location.row < 0 || location.row >= state.rows || location.col < 0 || location.col >= state.cols)
-        return false;
-
-    // La Location ne doit pas être de l'eau ni notre propre fourmi
-    if(state.grid[location.row][location.col].isWater || state.grid[location.row][location.col].ant == 0)
-        return false;
-
-    return true;
 }
 
 // Fonction qui génère le chemin à partir du noeud final

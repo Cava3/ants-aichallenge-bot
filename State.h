@@ -43,10 +43,9 @@ struct State
     int64_t seed;
 
     std::vector<std::vector<Square>> grid;
-    // std::vector<Ant> myAnts;
-    std::vector<Location> myAnts;
+    std::vector<Ant> myAnts;
+    // std::vector<Location> myAnts;
     std::vector<Location> enemyAnts, myHills, enemyHills, food, waters;
-    // std::vector<Location> waters;
 
     Timer timer;
     Bug bug;
@@ -63,10 +62,16 @@ struct State
 
     double distance(const Location &loc1, const Location &loc2) const;
     Location getLocation(const Location &startLoc, int direction) const;
+    bool isLocationValid(const Location& location);
+    bool isAntPosition(const Location& location);
+
 
     void updateVisionInformation();
     void addFromMemory();
     void updateMemory();
+
+    Ant* findAnt(const Location pos, int turn);
+    void deleteAnt(int id);
 };
 
 std::ostream& operator<<(std::ostream &os, const State &state);
