@@ -22,4 +22,9 @@ struct Location
     {
         return row == other.row && col == other.col;
     }
+
+    bool operator!=(const Location& other) const
+    {
+        return !(*this == other);
+    }
 };
