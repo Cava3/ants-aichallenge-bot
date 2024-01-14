@@ -112,10 +112,8 @@ void State::addFromMemory() {
     for(std::vector<Location>::iterator it = waters.begin(); it != waters.end(); ++it)
         grid[it->row][it->col].isWater = true;
 
-    for(int i = 0; i < 4; i++){
-        grid[hills[i].row][hills[i].col].isHill = true;
-        grid[hills[i].row][hills[i].col].hillPlayer = i;
-    }
+    for(std::vector<Location>::iterator it = enemyHills.begin(); it != enemyHills.end(); ++it)
+        grid[it->row][it->col].isHill = true;
 }
 
 // Remembers the waters from the map
@@ -125,7 +123,7 @@ void State::updateMemory() {
             if(grid[row][col].isWater)
                 waters.push_back(Location(row, col));
             else if(grid[row][col].isHill)
-                hills[grid[row][col].hillPlayer] = Location(row, col);
+                enemyHills.push_back(Location(row, col));
         }
     }
 }
