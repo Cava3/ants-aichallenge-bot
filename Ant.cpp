@@ -89,8 +89,17 @@ Food* Ant::_findClosestFood(State &state)
     const_cast<State&>(state).bug << "Ant::_findClosestFood()" << std::endl;
     // Calculer la distance en fonction du AStar, pas à vol d'oiseau
 
+    // Si la fourmi chasse déjà une nourriture, on lui renvoie celle-là
+    if (state.food.size() != 0) {
+        for (int i = 1; i < state.food.size(); i++) {
+            if(state.food[i].getPredatoryAntId() == id) {
+                return &state.food[i];
+            }
+        }
+    }
+
     if(state.freeFood.size() == 0) {
-        // Si pas de nourriture, on renvoie NULL
+        // Si pas de nourriture libre, on renvoie NULL
         const_cast<State&>(state).bug << "Exit Ant::_findClosestFood() with no food" << std::endl;
         return NULL;
     }
