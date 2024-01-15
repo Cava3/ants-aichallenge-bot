@@ -35,7 +35,7 @@ void AStar::pathfind(const State& state, const Location& start, const Location& 
     _endLocation = end;
     _rows = state.rows;
     _cols = state.cols;
-    _maxDistance = 20 * (int) state.distance(start, end); // Arbitraire
+    _maxDistance = std::min(20 * (int) state.distance(start, end), _rows+_cols); // Hard limit arbitraire
      
 
     Node* startNode = _createNode(start, end);
@@ -87,9 +87,11 @@ void AStar::_visitNode(Node* node_ptr, const State& state, const Location& end) 
 
     // Si on est arrivé à la fin, on stock le chemin
     if(node_ptr->location == end) {
-        // const_cast<State&>(state).bug << "On est à la fin" << std::endl;
         _maxDistance = node_ptr->distanceFromStart;
         _validatePath(node_ptr);
+        // OPTI : Pour économiser un peu de ressources, on arrête le A* dès qu'on a trouvé un chemin
+        // On n'a pas LE chemin parfait, mais on a un chemin ok et économe en performances.
+        _toVisit.clear(); // XXX
         return;
     }
 
