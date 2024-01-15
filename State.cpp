@@ -141,19 +141,39 @@ void State::updateVisionInformation()
 
 // Puts back remembered waters on the map
 void State::addFromMemory() {
-    for(std::vector<Location>::iterator it = waters.begin(); it != waters.end(); ++it) {
-        grid[it->row][it->col].isWater = true;
-    }
+    for(std::vector<Location>::iterator it = waters.begin(); it != waters.end(); ++it)
+        if(!grid[it->row][it->col].isVisible)
+            grid[it->row][it->col].isWater = true;
+
+    for(std::vector<Location>::iterator it = enemyHills.begin(); it != enemyHills.end(); ++it)
+        if(!grid[it->row][it->col].isVisible)
+            grid[it->row][it->col].isHill = true;
 }
 
 // Remembers the waters from the map
 void State::updateMemory() {
+    waters.clear();
+    enemyHills.clear();
+
     for(int row=0; row<rows; row++) {
         for(int col=0; col<cols; col++) {
-            if(grid[row][col].isWater) {
+            if(grid[row][col].isWater)
                 waters.push_back(Location(row, col));
-            }
+            else if(grid[row][col].isHill)
+                enemyHills.push_back(Location(row, col));
         }
+    }
+}
+
+// Update playstyle
+// TODO: Anti-ghosting
+void State::updatePlaystyle() {
+    if(myAnts.size() < 10) {
+        playstyle = PLAYSTYLE_FLEE;
+    } else if(myAnts.size() < 20) {
+        playstyle = PLAYSTYLE_EAT;
+    } else {
+        playstyle = PLAYSTYLE_ANIHILATE;
     }
 }
 
@@ -383,6 +403,9 @@ std::istream& operator>>(std::istream &is, State &state)
             else //unknown line
                 getline(is, junk);
         }
+
+        // Update playstyle
+        state.updatePlaystyle();
     }
 
     return is;

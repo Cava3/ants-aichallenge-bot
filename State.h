@@ -16,13 +16,16 @@
 #include "Square.h"
 #include "Timer.h"
 
+#define PLAYSTYLE_FLEE 0
+#define PLAYSTYLE_EAT 1
+#define PLAYSTYLE_ANIHILATE 2
 
 /*
     constants
 */
 const int TDIRECTIONS = 4;
 const char CDIRECTIONS[4] = {'N', 'E', 'S', 'W'};
-const int DIRECTIONS[4][2] = { {-1, 0}, {0, 1}, {1, 0}, {0, -1} };      //{N, E, S, W}
+const int DIRECTIONS[4][2] = { {-1, 0}, {0, 1}, {1, 0}, {0, -1} }; //{N, E, S, W}
 
 /*
     struct to store current state information
@@ -31,6 +34,7 @@ struct State
 {
     /*
         Variables
+        TODO: private and convention
     */
     int rows, cols,
         turn, turns,
@@ -41,6 +45,7 @@ struct State
     std::vector<double> scores;
     bool gameover;
     int64_t seed;
+    int playstyle;
 
     std::vector<std::vector<Square>> grid;
     std::vector<Ant> myAnts;
@@ -69,7 +74,7 @@ struct State
     void updateVisionInformation();
     void addFromMemory();
     void updateMemory();
-
+    void updatePlaystyle();
     Ant* findAnt(const Location pos, int turn);
     void deleteAnt(int id);
 };

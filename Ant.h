@@ -26,6 +26,7 @@ class Ant
         Location getNextTurnPosition();
         Location getDestination();
         void playTurn(State& state, double timeLimit);
+        Location takeDecision(const State& state, double timeLimit);
         void validateLastTurnMove(State& state, bool validated);
 };
 
