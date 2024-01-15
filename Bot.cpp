@@ -22,6 +22,9 @@ void Bot::playGame() {
         state.updateVisionInformation();
         state.addFromMemory();
 
+        state.deleteMissingFood();
+        state.checkFreeFood();
+
         makeMoves();
 
         state.updateMemory();

@@ -41,7 +41,7 @@ struct State
     int rows, cols,
         turn, turns,
         noPlayers,
-        antsId;
+        antsId, foodId;
     double attackradius, spawnradius, viewradius;
     double loadtime, turntime;
     std::vector<double> scores;
@@ -53,6 +53,7 @@ struct State
     std::vector<Ant> myAnts;
     // std::vector<Location> myAnts;
     std::vector<Food> food;
+    std::vector<Food*> freeFood;
     std::vector<Location> enemyAnts, myHills, enemyHills, waters;
 
     Timer timer;
@@ -79,7 +80,13 @@ struct State
     void updateMemory();
     void updatePlaystyle();
     Ant* findAnt(const Location pos, int turn);
+    Food* findFood(const Location pos);
+    void checkFreeFood();
+    void markFood(Food* food_ptr, int antId);
     void deleteAnt(int id);
+    void deleteFood(int id);
+    void deleteFoodFromFreeFood(Food* food_ptr);
+    void deleteMissingFood();
 };
 
 std::ostream& operator<<(std::ostream &os, const State &state);
