@@ -21,7 +21,7 @@ void State::setup()
 //resets all non-water squares to land and clears the bots ant vector
 void State::reset()
 {
-    myAnts.clear();
+    // myAnts.clear();
     enemyAnts.clear();
     myHills.clear();
     enemyHills.clear();
@@ -35,6 +35,7 @@ void State::reset()
 //outputs move information to the engine
 void State::makeMove(const Location &loc, int direction)
 {
+    // const_cast<State&>(*this).bug << "o " << loc.row << " " << loc.col << " " << CDIRECTIONS[direction] << std::endl;
     std::cout << "o " << loc.row << " " << loc.col << " " << CDIRECTIONS[direction] << std::endl;
 
     Location nLoc = getLocation(loc, direction);
@@ -43,6 +44,7 @@ void State::makeMove(const Location &loc, int direction)
     if(!grid[nLoc.row][nLoc.col].isWater) {
         grid[nLoc.row][nLoc.col].ant = grid[loc.row][loc.col].ant;
         grid[loc.row][loc.col].ant = -1;
+
     }
 };
 
@@ -59,9 +61,40 @@ double State::distance(const Location &loc1, const Location &loc2) const
 //returns the new location from moving in a given direction with the edges wrapped
 Location State::getLocation(const Location &loc, int direction) const
 {
-    return Location( (loc.row + DIRECTIONS[direction][0] + rows) % rows,
-                     (loc.col + DIRECTIONS[direction][1] + cols) % cols );
+    // Gros bug ici, retourne (11:65) quand loc = (9:65) et destination = 4
+    int nLocRow = (loc.row + DIRECTIONS[direction][0] + rows) % rows;
+    int nLocCol = (loc.col + DIRECTIONS[direction][1] + cols) % cols;
+
+    if(loc.row == 9 && loc.col == 65) {
+        const_cast<State&>(*this).bug << "State::getLocation()" << std::endl;
+        const_cast<State&>(*this).bug << "Loc " << loc.row << ":" << loc.col << std::endl;
+        const_cast<State&>(*this).bug << "Direction " << direction << std::endl;
+        const_cast<State&>(*this).bug << "nLoc " << nLocRow << ":" << nLocCol << std::endl;
+    }
+
+    return Location(nLocRow, nLocCol);
 };
+
+bool State::isLocationValid(const Location& location){
+    // LA Location doit être dans la grille
+    if(location.row < 0 || location.row >= rows || location.col < 0 || location.col >= cols)
+        return false;
+
+    // La Location ne doit pas être de l'eau
+    if(grid[location.row][location.col].isWater)
+        return false;
+
+    return true;
+}
+
+bool State::isAntPosition(const Location& location) {
+    if(grid[location.row][location.col].ant == 0) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 
 /*
     This function will update update the lastSeen value for any squares currently
@@ -79,11 +112,10 @@ void State::updateVisionInformation()
 
     for(int a=0; a<(int) myAnts.size(); a++)
     {
-        sLoc = myAnts[a];
-        // sLoc = myAnts[a].getPosition();
+        sLoc = myAnts[a].getPosition();
         locQueue.push(sLoc);
 
-        std::vector<std::vector<bool> > visited(rows, std::vector<bool>(cols, 0));
+        std::vector<std::vector<bool>> visited(rows, std::vector<bool>(cols, 0));
         grid[sLoc.row][sLoc.col].isVisible = 1;
         visited[sLoc.row][sLoc.col] = 1;
 
@@ -143,6 +175,45 @@ void State::updatePlaystyle() {
     } else {
         playstyle = PLAYSTYLE_ANIHILATE;
     }
+}
+
+// Iterate the myAnts vector to return the ant matching the given location
+Ant* State::findAnt(const Location pos, int turn) {
+    // 0 for current turn, 1 for next one
+
+    Ant* ant = NULL;
+
+    for(int i = 0; i < myAnts.size(); i++) {
+        if(turn == 0) {
+            if(pos == myAnts[i].getPosition()) {
+                ant = &myAnts[i];
+                break;
+            }
+        }
+        else if (turn == 1) {
+            if(pos == myAnts[i].getNextTurnPosition()) {
+                ant = &myAnts[i];
+                break;
+            }
+        }
+    }
+
+    return ant;
+}
+
+// Removes an ant from myAnts vector
+void State::deleteAnt(int id) {
+    myAnts.erase(
+        std::remove_if(
+            myAnts.begin(),
+            myAnts.end(),
+            [id](const Ant &ant)
+            {
+                return ant.id == id;
+            }
+        ),
+        myAnts.end()
+    );
 }
 
 
@@ -262,9 +333,28 @@ std::istream& operator>>(std::istream &is, State &state)
                 is >> row >> col >> player;
                 state.grid[row][col].ant = player;
                 if(player == 0) {
-                    state.myAnts.push_back(Location(row, col));
-                    // state.antsId++;
-                    // state.myAnts.push_back(Ant(state.antsId, Location(row, col)));
+                    // Looking for ants whose move has successfully been processed
+                    // by matching ant._nextTurnPosition
+                    Ant* ant_ptr = state.findAnt(Location(row, col), 1);
+                    
+                    if(ant_ptr != NULL) {
+                        ant_ptr->validateLastTurnMove(state, true);
+                    }
+                    else {
+                        // Looking for ants whose move has not been processed
+                        // (either blocked by engine or new ant)
+                        ant_ptr = state.findAnt(Location(row, col), 0);
+
+                        if(ant_ptr != NULL) {
+                            const_cast<State&>(state).bug << "Ant " << ant_ptr->id << " did not move last turn" << std::endl;
+                            ant_ptr->validateLastTurnMove(state, false);
+                        }
+                        else {
+                            // New ant from the hill
+                            state.antsId++;
+                            state.myAnts.push_back(Ant(state.antsId, state, Location(row, col)));
+                        }
+                    }
                 }
                 else
                     state.enemyAnts.push_back(Location(row, col));
@@ -273,6 +363,15 @@ std::istream& operator>>(std::istream &is, State &state)
             {
                 is >> row >> col >> player;
                 state.grid[row][col].deadAnts.push_back(player);
+
+                if(player == 0) {
+                    Ant* ant_ptr = state.findAnt(Location(row, col), 1);
+
+                    if(ant_ptr != NULL) {
+                        const_cast<State&>(state).bug << "Ant " << ant_ptr->id << " of player " << player << " dead at " << row << ":" << col << std::endl;
+                        state.deleteAnt(ant_ptr->id);
+                    }
+                }
             }
             else if(inputType == "h")
             {

@@ -48,8 +48,8 @@ struct State
     int playstyle;
 
     std::vector<std::vector<Square>> grid;
-    // std::vector<Ant> myAnts;
-    std::vector<Location> myAnts;
+    std::vector<Ant> myAnts;
+    // std::vector<Location> myAnts;
     std::vector<Location> enemyAnts, myHills, enemyHills, food, waters;
 
     Timer timer;
@@ -67,11 +67,16 @@ struct State
 
     double distance(const Location &loc1, const Location &loc2) const;
     Location getLocation(const Location &startLoc, int direction) const;
+    bool isLocationValid(const Location& location);
+    bool isAntPosition(const Location& location);
+
 
     void updateVisionInformation();
     void addFromMemory();
     void updateMemory();
     void updatePlaystyle();
+    Ant* findAnt(const Location pos, int turn);
+    void deleteAnt(int id);
 };
 
 std::ostream& operator<<(std::ostream &os, const State &state);
