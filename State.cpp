@@ -9,6 +9,7 @@ State::State()
     gameover = 0;
     turn = 0;
     antsId = 0;
+    foodId = 0;
     bug.open("./debug.txt");
 };
 
@@ -316,7 +317,17 @@ std::istream& operator>>(std::istream &is, State &state)
             {
                 is >> row >> col;
                 state.grid[row][col].isFood = 1;
-                state.food.push_back(Food(Location(row, col)));
+
+                // Food* food_ptr = state.findFood(Location(row, col));
+
+                // if(food_ptr == NULL) {
+                //     // New food !
+                    state.foodId++;
+                    state.food.push_back(Food(state.foodId, Location(row, col)));
+                    const_cast<State&>(state).bug << "Created food #" << state.foodId << std::endl;
+                    const_cast<State&>(state).bug << "state.food.size() : " << state.food.size() << std::endl;
+
+                // }
             }
             else if(inputType == "a") //live ant square
             {

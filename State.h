@@ -41,7 +41,7 @@ struct State
     int rows, cols,
         turn, turns,
         noPlayers,
-        antsId;
+        antsId, foodId;
     double attackradius, spawnradius, viewradius;
     double loadtime, turntime;
     std::vector<double> scores;

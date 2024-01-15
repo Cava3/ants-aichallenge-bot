@@ -8,7 +8,10 @@ class Food {
         int _predatoryAndId = 0;
 
     public :
-        Food(Location loc) {
+        int id;
+
+        Food(int id, Location loc) {
+            this->id = id;
             _loc = loc;
         };
 
