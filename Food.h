@@ -22,4 +22,8 @@ class Food {
         int getPredatoryAntId() {
             return _predatoryAndId;
         };
+
+        void setPredatoryAntId(int antId) {
+            _predatoryAndId = antId;
+        };
 };

@@ -192,6 +192,37 @@ Ant* State::findAnt(const Location pos, int turn) {
     return ant;
 }
 
+// Iterate the food vector to return the food matching the given location
+Food* State::findFood(const Location pos) {
+    Food* food_ptr = NULL;
+
+    for(int i = 0; i < food.size(); i++) {
+        if(pos == food[i].getLocation()) {
+            food_ptr = &food[i];
+            break;
+        }
+    }
+
+    return food_ptr;
+}
+
+// Fills the vector with every food that is not hunted by an ant
+void State::checkFreeFood() {
+    freeFood.clear();
+
+    for(int i = 0; i < food.size(); i++) {
+        if(food[i].getPredatoryAntId() == 0) {
+            freeFood.push_back(&food[i]);
+        }
+    }
+}
+
+// Mark food as hunted by an ant and delete it from the freeFood vector
+void State::markFood(Food* food_ptr, int antId) {
+    food_ptr->setPredatoryAntId(antId);
+    deleteFoodFromFreeFood(food_ptr);
+}
+
 // Removes an ant from myAnts vector
 void State::deleteAnt(int id) {
     myAnts.erase(
@@ -205,6 +236,41 @@ void State::deleteAnt(int id) {
         ),
         myAnts.end()
     );
+}
+
+// REDUNDANT WITH DELETEANT()
+// Removes a food from food vector
+void State::deleteFood(int id) {
+    food.erase(
+        std::remove_if(
+            food.begin(),
+            food.end(),
+            [id](const Food &food)
+            {
+                return food.id == id;
+            }
+        ),
+        food.end()
+    );
+}
+
+// REDUNDANT WITH DELETEANT()
+// Removes a food from food vector
+void State::deleteFoodFromFreeFood(Food* food_ptr) {
+    std::vector<Food*>::iterator it = std::find(freeFood.begin(), freeFood.end(), food_ptr);
+    if(it != freeFood.end()) {
+        freeFood.erase(it);
+    }
+}
+
+// Checks the grid to update state.food when food has been eaten
+void State::deleteMissingFood() {
+    for(int i = 0; i < food.size(); i++) {
+        Location foodLoc = food[i].getLocation();
+        if(!grid[foodLoc.row][foodLoc.col].isFood) {
+            deleteFood(food[i].id);
+        }
+    }
 }
 
 
@@ -318,16 +384,13 @@ std::istream& operator>>(std::istream &is, State &state)
                 is >> row >> col;
                 state.grid[row][col].isFood = 1;
 
-                // Food* food_ptr = state.findFood(Location(row, col));
+                Food* food_ptr = state.findFood(Location(row, col));
 
-                // if(food_ptr == NULL) {
-                //     // New food !
+                if(food_ptr == NULL) {
+                    // New food !
                     state.foodId++;
                     state.food.push_back(Food(state.foodId, Location(row, col)));
-                    const_cast<State&>(state).bug << "Created food #" << state.foodId << std::endl;
-                    const_cast<State&>(state).bug << "state.food.size() : " << state.food.size() << std::endl;
-
-                // }
+                }
             }
             else if(inputType == "a") //live ant square
             {

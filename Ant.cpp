@@ -89,23 +89,22 @@ Food* Ant::_findClosestFood(State &state)
     const_cast<State&>(state).bug << "Ant::_findClosestFood()" << std::endl;
     // Calculer la distance en fonction du AStar, pas à vol d'oiseau
 
-    if(state.food.size() == 0) {
+    if(state.freeFood.size() == 0) {
         // Si pas de nourriture, on renvoie NULL
         const_cast<State&>(state).bug << "Exit Ant::_findClosestFood() with no food" << std::endl;
         return NULL;
     }
     else {
-        Food* closestFood_ptr = &state.food[0];
+        Food* closestFood_ptr = state.freeFood[0];
 
-        for (int i = 1; i < state.food.size(); i++)
+        for (int i = 1; i < state.freeFood.size(); i++)
         {
             int antPosCol = _position.col;
             int antPosRow = _position.row;
             int currentFoodDistance = (abs(closestFood_ptr->getLocation().col - antPosCol) +
                                     abs(closestFood_ptr->getLocation().row - antPosRow));
-            const_cast<State&>(state).bug << "currentFoodDistance" << std::endl;
-            int newFoodDistance = (abs(state.food[i].getLocation().col - antPosCol) +
-                                abs(state.food[i].getLocation().row - antPosRow));
+            int newFoodDistance = (abs(state.freeFood[i]->getLocation().col - antPosCol) +
+                                abs(state.freeFood[i]->getLocation().row - antPosRow));
 
             if (newFoodDistance < currentFoodDistance)
             {
@@ -156,6 +155,8 @@ Location Ant::takeDecision(State &state, double timeLimit)
                 return _path[0];
             } else {
                 _setDestination(state, closestFood_ptr->getLocation());
+                state.markFood(closestFood_ptr, id);
+                const_cast<State&>(state).bug << "Ant " << id << " is now going to food at " << closestFood_ptr->getLocation().row << ":" << closestFood_ptr->getLocation().col << std::endl;
                 return _path[0];
             }
         }
