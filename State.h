@@ -12,6 +12,7 @@
 
 #include "Ant.h"
 #include "Bug.h"
+#include "Food.h"
 #include "Location.h"
 #include "Square.h"
 #include "Timer.h"
@@ -51,7 +52,8 @@ struct State
     std::vector<std::vector<Square>> grid;
     std::vector<Ant> myAnts;
     // std::vector<Location> myAnts;
-    std::vector<Location> enemyAnts, myHills, enemyHills, food, waters;
+    std::vector<Food> food;
+    std::vector<Location> enemyAnts, myHills, enemyHills, waters;
 
     Timer timer;
     Bug bug;

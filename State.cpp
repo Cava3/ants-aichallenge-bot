@@ -316,7 +316,7 @@ std::istream& operator>>(std::istream &is, State &state)
             {
                 is >> row >> col;
                 state.grid[row][col].isFood = 1;
-                state.food.push_back(Location(row, col));
+                state.food.push_back(Food(Location(row, col)));
             }
             else if(inputType == "a") //live ant square
             {

@@ -84,38 +84,44 @@ int Ant::_selectDirection(const State &state, Location nLoc, double timeLimit)
     return direction;
 }
 
-Location Ant::_findClosestFood(const State &state)
+Food* Ant::_findClosestFood(State &state)
 {
     const_cast<State&>(state).bug << "Ant::_findClosestFood()" << std::endl;
     // Calculer la distance en fonction du AStar, pas à vol d'oiseau
-    // Si pas de nourriture, on renvoie -1; -1
-    Location closestFood = Location(-1, -1);
 
-
-    for (int i = 0; i < state.food.size(); i++)
-    {
-        int antPosCol = _position.col;
-        int antPosRow = _position.row;
-        int currentFoodDistance = (abs(closestFood.col - antPosCol) +
-                                   abs(closestFood.row - antPosRow));
-        int newFoodDistance = (abs(state.food[i].col - antPosCol) +
-                               abs(state.food[i].row - antPosRow));
-
-        if (newFoodDistance < currentFoodDistance)
-        {
-            closestFood = state.food[i];
-        }
+    if(state.food.size() == 0) {
+        // Si pas de nourriture, on renvoie NULL
+        const_cast<State&>(state).bug << "Exit Ant::_findClosestFood() with no food" << std::endl;
+        return NULL;
     }
+    else {
+        Food* closestFood_ptr = &state.food[0];
 
-    const_cast<State&>(state).bug << "Closest food is " << closestFood.row << ":" << closestFood.col << std::endl;
-    const_cast<State&>(state).bug << "Exit Ant::_findClosestFood()" << std::endl;
+        for (int i = 1; i < state.food.size(); i++)
+        {
+            int antPosCol = _position.col;
+            int antPosRow = _position.row;
+            int currentFoodDistance = (abs(closestFood_ptr->getLocation().col - antPosCol) +
+                                    abs(closestFood_ptr->getLocation().row - antPosRow));
+            const_cast<State&>(state).bug << "currentFoodDistance" << std::endl;
+            int newFoodDistance = (abs(state.food[i].getLocation().col - antPosCol) +
+                                abs(state.food[i].getLocation().row - antPosRow));
 
-    return closestFood;
+            if (newFoodDistance < currentFoodDistance)
+            {
+                closestFood_ptr = &state.food[i];
+            }
+        }
+
+    const_cast<State&>(state).bug << "Closest food is " << closestFood_ptr->getLocation().row << ":" << closestFood_ptr->getLocation().col << std::endl;
+    const_cast<State&>(state).bug << "Exit Ant::_findClosestFood() with food" << std::endl;
+    return closestFood_ptr;
+    }
 }
 
-Location Ant::takeDecision(const State &state, double timeLimit)
+Location Ant::takeDecision(State &state, double timeLimit)
 {
-    Location closestFood;
+    Food* closestFood_ptr;
     Location randomLocation;
 
     switch (state.playstyle)
@@ -143,13 +149,13 @@ Location Ant::takeDecision(const State &state, double timeLimit)
         }
 
         // Si pas d'ennemi proche, on cherche de la nourriture
-        closestFood = _findClosestFood(state);
-        if (closestFood != Location(-1, -1)) {
-            if(_destination == closestFood) {
+        closestFood_ptr = _findClosestFood(state);
+        if (closestFood_ptr != NULL) {
+            if(_destination == closestFood_ptr->getLocation()) {
                 _path.erase(_path.begin());
                 return _path[0];
             } else {
-                _setDestination(state, closestFood);
+                _setDestination(state, closestFood_ptr->getLocation());
                 return _path[0];
             }
         }
@@ -178,13 +184,13 @@ Location Ant::takeDecision(const State &state, double timeLimit)
     // Chercher de la nourriture ou explorer
     case PLAYSTYLE_EAT:
         // On cherche en priorité de la nourriture
-        closestFood = _findClosestFood(state);
-        if (closestFood != Location(-1, -1)) {
-            if(_destination == closestFood) {
+        closestFood_ptr = _findClosestFood(state);
+        if (closestFood_ptr != NULL) {
+            if(_destination == closestFood_ptr->getLocation()) {
                 _path.erase(_path.begin());
                 return _path[0];
             } else {
-                _setDestination(state, closestFood);
+                _setDestination(state, closestFood_ptr->getLocation());
                 return _path[0];
             }
         }
@@ -214,13 +220,13 @@ Location Ant::takeDecision(const State &state, double timeLimit)
     case PLAYSTYLE_ANIHILATE:
         // On cherche en priorité de la nourriture
         // TODO: Proche
-        closestFood = _findClosestFood(state);
-        if (closestFood != Location(-1, -1)) {
-            if(_destination == closestFood) {
+        closestFood_ptr = _findClosestFood(state);
+        if (closestFood_ptr != NULL) {
+            if(_destination == closestFood_ptr->getLocation()) {
                 _path.erase(_path.begin());
                 return _path[0];
             } else {
-                _setDestination(state, closestFood);
+                _setDestination(state, closestFood_ptr->getLocation());
                 return _path[0];
             }
         }
