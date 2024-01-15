@@ -15,7 +15,7 @@ class Ant
         AStar _pathfinder;
         std::vector<Location> _path;
         int _selectDirection(const State& state, double timeLimit);
-        void _setDestination(State& state, Location location);
+        void _setDestination(const State& state, Location location);
         Location _findClosestFood(const State& state);
         void _makeMove(State& state, int direction);
 

@@ -16,9 +16,6 @@
 #include "Square.h"
 #include "Timer.h"
 
-#define PLAYSTYLE_FLEE 0
-#define PLAYSTYLE_EAT 1
-#define PLAYSTYLE_ANIHILATE 2
 
 /*
     constants
@@ -26,6 +23,10 @@
 const int TDIRECTIONS = 4;
 const char CDIRECTIONS[4] = {'N', 'E', 'S', 'W'};
 const int DIRECTIONS[4][2] = { {-1, 0}, {0, 1}, {1, 0}, {0, -1} }; //{N, E, S, W}
+
+const int PLAYSTYLE_FLEE = 0;
+const int PLAYSTYLE_EAT = 1;
+const int PLAYSTYLE_ANIHILATE = 2;
 
 /*
     struct to store current state information
@@ -67,7 +68,7 @@ struct State
 
     double distance(const Location &loc1, const Location &loc2) const;
     Location getLocation(const Location &startLoc, int direction) const;
-    bool isLocationValid(const Location& location);
+    bool isLocationValid(const Location& location) const;
     bool isAntPosition(const Location& location);
 
 

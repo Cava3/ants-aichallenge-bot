@@ -44,7 +44,7 @@ void Ant::playTurn(State& state, double timeLimit) {
     _makeMove(state, direction);
 }
 
-void Ant::_setDestination(State& state, Location location) {
+void Ant::_setDestination(const State& state, Location location) {
     const_cast<State&>(state).bug << "Ant::_setDestination()" << std::endl;
     _destination = location;
     _pathfinder.pathfind(state, _position, _destination);
@@ -55,7 +55,7 @@ void Ant::_setDestination(State& state, Location location) {
     }
 }
 
-int Ant::selectDirection(const State &state, double timeLimit)
+int Ant::_selectDirection(const State &state, double timeLimit)
 {
     const_cast<State&>(state).bug << "Ant::_selectDirection()" << std::endl;
     Location nLoc;
@@ -118,6 +118,9 @@ Location Ant::_findClosestFood(const State &state)
 
 Location Ant::takeDecision(const State &state, double timeLimit)
 {
+    Location closestFood;
+    Location randomLocation;
+
     switch (state.playstyle)
     {
     // Style de jeu du début de partie (Moins de 10 fourmis)
@@ -143,13 +146,13 @@ Location Ant::takeDecision(const State &state, double timeLimit)
         }
 
         // Si pas d'ennemi proche, on cherche de la nourriture
-        Location closestFood = findClosestFood(state);
+        closestFood = _findClosestFood(state);
         if (closestFood != Location(-1, -1)) {
-            if(_target == closestFood) {
+            if(_destination == closestFood) {
                 _path.erase(_path.begin());
                 return _path[0];
             } else {
-                setTarget(state, closestFood);
+                _setDestination(state, closestFood);
                 return _path[0];
             }
         }
@@ -162,7 +165,7 @@ Location Ant::takeDecision(const State &state, double timeLimit)
         }
 
         // Sinon on explore un autre endroit
-        Location randomLocation = Location(-1, -1);
+        randomLocation = Location(-1, -1);
         while (randomLocation == Location(-1, -1)) {
             int randomRow = _position.row + (rand() % 10) - 5;
             int randomCol = _position.col + (rand() % 10) - 5;
@@ -170,7 +173,7 @@ Location Ant::takeDecision(const State &state, double timeLimit)
                 randomLocation = Location(randomRow, randomCol);
             }
         }
-        setTarget(state, randomLocation);
+        _setDestination(state, randomLocation);
         return _path[0];
         break;
 
@@ -178,13 +181,13 @@ Location Ant::takeDecision(const State &state, double timeLimit)
     // Chercher de la nourriture ou explorer
     case PLAYSTYLE_EAT:
         // On cherche en priorité de la nourriture
-        Location closestFood = findClosestFood(state);
+        closestFood = _findClosestFood(state);
         if (closestFood != Location(-1, -1)) {
-            if(_target == closestFood) {
+            if(_destination == closestFood) {
                 _path.erase(_path.begin());
                 return _path[0];
             } else {
-                setTarget(state, closestFood);
+                _setDestination(state, closestFood);
                 return _path[0];
             }
         }
@@ -197,7 +200,7 @@ Location Ant::takeDecision(const State &state, double timeLimit)
         }
 
         // Sinon on explore un autre endroit
-        Location randomLocation = Location(-1, -1);
+        randomLocation = Location(-1, -1);
         while (randomLocation == Location(-1, -1)) {
             int randomRow = _position.row + (rand() % 10) - 5;
             int randomCol = _position.col + (rand() % 10) - 5;
@@ -205,7 +208,7 @@ Location Ant::takeDecision(const State &state, double timeLimit)
                 randomLocation = Location(randomRow, randomCol);
             }
         }
-        setTarget(state, randomLocation);
+        _setDestination(state, randomLocation);
         return _path[0];
         break;
     
@@ -214,13 +217,13 @@ Location Ant::takeDecision(const State &state, double timeLimit)
     case PLAYSTYLE_ANIHILATE:
         // On cherche en priorité de la nourriture
         // TODO: Proche
-        Location closestFood = findClosestFood(state);
+        closestFood = _findClosestFood(state);
         if (closestFood != Location(-1, -1)) {
-            if(_target == closestFood) {
+            if(_destination == closestFood) {
                 _path.erase(_path.begin());
                 return _path[0];
             } else {
-                setTarget(state, closestFood);
+                _setDestination(state, closestFood);
                 return _path[0];
             }
         }
@@ -238,11 +241,11 @@ Location Ant::takeDecision(const State &state, double timeLimit)
                 }
             }
 
-            if(_target == closestHill) {
+            if(_destination == closestHill) {
                 _path.erase(_path.begin());
                 return _path[0];
             } else {
-                setTarget(state, closestHill); // FIXME: Supprimer de la mémoire quand on a détruit le nid
+                _setDestination(state, closestHill); // FIXME: Supprimer de la mémoire quand on a détruit le nid
                 return _path[0];
             }
         } else {
@@ -254,7 +257,7 @@ Location Ant::takeDecision(const State &state, double timeLimit)
             }
 
             // Sinon on explore un autre endroit
-            Location randomLocation = Location(-1, -1);
+            randomLocation = Location(-1, -1);
             while (randomLocation == Location(-1, -1)) {
                 int randomRow = _position.row + (rand() % 10) - 5;
                 int randomCol = _position.col + (rand() % 10) - 5;
@@ -262,7 +265,7 @@ Location Ant::takeDecision(const State &state, double timeLimit)
                     randomLocation = Location(randomRow, randomCol);
                 }
             }
-            setTarget(state, randomLocation);
+            _setDestination(state, randomLocation);
             return _path[0];
         }
 
@@ -272,6 +275,7 @@ Location Ant::takeDecision(const State &state, double timeLimit)
     }
 
     return Location(-1, -1);
+}
 
 void Ant::_makeMove(State& state, int direction) {
     const_cast<State&>(state).bug << "Ant::_makeMove()" << std::endl;

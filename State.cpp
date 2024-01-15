@@ -75,7 +75,7 @@ Location State::getLocation(const Location &loc, int direction) const
     return Location(nLocRow, nLocCol);
 };
 
-bool State::isLocationValid(const Location& location){
+bool State::isLocationValid(const Location& location) const {
     // LA Location doit être dans la grille
     if(location.row < 0 || location.row >= rows || location.col < 0 || location.col >= cols)
         return false;

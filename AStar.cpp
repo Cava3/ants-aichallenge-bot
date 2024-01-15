@@ -30,7 +30,7 @@ std::vector<Location> AStar::getPath() {
 }
 
 // Lance le pathfind dans le contexte de `state`, de `start` à `end`
-void AStar::pathfind(State& state, const Location& start, const Location& end){
+void AStar::pathfind(const State& state, const Location& start, const Location& end){
     _reset();
     _endLocation = end;
     _rows = state.rows;
@@ -60,7 +60,7 @@ void AStar::reset() {
 //==========================================================================
 
 
-void AStar::_pathfindLoop(State& state, const Location& end) {
+void AStar::_pathfindLoop(const State& state, const Location& end) {
     while(!_toVisit.empty() && const_cast<State&>(state).timer.getTime() < state.turntime - 20) {
         // const_cast<State&>(state).bug << "On loop" << std::endl;
 
@@ -74,7 +74,7 @@ void AStar::_pathfindLoop(State& state, const Location& end) {
     }
 }
 
-void AStar::_visitNode(Node* node_ptr, State& state, const Location& end) {
+void AStar::_visitNode(Node* node_ptr, const State& state, const Location& end) {
     // On valide la visite du noeud
     node_ptr->explored = true;
     _toVisit.erase(std::find(_toVisit.begin(), _toVisit.end(), node_ptr));
@@ -97,7 +97,7 @@ void AStar::_visitNode(Node* node_ptr, State& state, const Location& end) {
     _addAdjacentNodes(node_ptr, state);
 }
 
-void AStar::_addAdjacentNodes(Node* node_ptr, State& state) {
+void AStar::_addAdjacentNodes(Node* node_ptr, const State& state) {
     Location location = node_ptr->location;
     Node* previousNode = node_ptr;
 
