@@ -68,8 +68,8 @@ struct State
 
     double distance(const Location &loc1, const Location &loc2) const;
     Location getLocation(const Location &startLoc, int direction) const;
-    bool isLocationValid(const Location& location) const;
-    bool isAntPosition(const Location& location);
+    bool isLocationReachable(const Location& location) const;
+    bool isLocationSafe(const Location& location);
 
 
     void updateVisionInformation();

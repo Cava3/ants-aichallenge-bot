@@ -35,14 +35,14 @@ void AStar::pathfind(const State& state, const Location& start, const Location& 
     _endLocation = end;
     _rows = state.rows;
     _cols = state.cols;
-    _maxDistance = 6 * (int) state.distance(start, end); // Arbitraire
+    _maxDistance = 20 * (int) state.distance(start, end); // Arbitraire
      
 
     Node* startNode = _createNode(start, end);
     startNode->distanceFromStart = 0;
     _toVisit.push_back(startNode);
 
-    if(start == end || !state.isLocationValid(end)) {
+    if(start == end || !state.isLocationReachable(end)) {
         _validatePath(startNode);
         return;
     }
@@ -106,7 +106,7 @@ void AStar::_addAdjacentNodes(Node* node_ptr, const State& state) {
         // Je créer une Location à partir de la direction
         Location adjacentLocation = state.getLocation(location, d);
         // Je vois si je peux m'y déplacer
-        if(state.isLocationValid(adjacentLocation)) {
+        if(state.isLocationReachable(adjacentLocation)) {
             Node* adjacentNode_ptr = _createNode(adjacentLocation, _endLocation);
 
             if(_getNodeScore(adjacentNode_ptr, state) >= _maxDistance) {

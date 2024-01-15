@@ -27,14 +27,13 @@ void Ant::playTurn(State& state, double timeLimit) {
     const_cast<State&>(state).bug << "Ant " << id << " is playing" << std::endl;
     const_cast<State&>(state).bug << "Location " << _position.row << ":" << _position.col << std::endl;
 
-    Location closestFood = _findClosestFood(state);
+    Location nLoc = takeDecision(state, timeLimit);
 
-    // Sale, trouver un moyen de comparer les 2 Locations + proprement
-    if(closestFood.row != _destination.row || closestFood.col != _destination.col) {
-        _setDestination(state, closestFood);
+    if(nLoc != _destination) {
+        _setDestination(state, nLoc);
     }
 
-    int direction = _selectDirection(state, timeLimit);
+    int direction = _selectDirection(state, nLoc, timeLimit);
 
     if(direction == -1) {
         const_cast<State&>(state).bug << "Ant " << id << " goes nowhere" << std::endl;
@@ -55,35 +54,32 @@ void Ant::_setDestination(const State& state, Location location) {
     }
 }
 
-int Ant::_selectDirection(const State &state, double timeLimit)
+int Ant::_selectDirection(const State &state, Location nLoc, double timeLimit)
 {
     const_cast<State&>(state).bug << "Ant::_selectDirection()" << std::endl;
-    Location nLoc;
+
     int direction;
 
-    // On choisis quelle action faire
-    nLoc = takeDecision(state, timeLimit);
-
+    // Mettre ailleurs
     if (_path.size() == 0)
     {
         const_cast<State &>(state).bug << "/!\\ Empty path" << std::endl;
         return -1;
     }
 
-
     // On détermine la direction en fonction de la position
-    for (direction = 0; direction < TDIRECTIONS; direction++)
+    for (int i = 0; i < TDIRECTIONS; i++)
     {
-        Location lookingLocation = state.getLocation(_position, direction);
+        Location lookingLocation = state.getLocation(_position, i);
 
-        // const_cast<State&>(state).bug << "lookingLocation: " << lookingLocation.col << "," << lookingLocation.row << std::endl;
-        // const_cast<State&>(state).bug << "nLoc: " << nLoc.col << "," << nLoc.row << std::endl;
-        if(lookingLocation == nLoc) {
+        if(lookingLocation.row == nLoc.row && lookingLocation.col == nLoc.col) {
+            direction = i;
             break;
         }
     }
 
     const_cast<State&>(state).bug << "Ant " << id << " goes " << direction << std::endl;
+    const_cast<State&>(state).bug << "Exit Ant::_selectDirection()" << std::endl;
 
     return direction;
 }
@@ -112,6 +108,7 @@ Location Ant::_findClosestFood(const State &state)
     }
 
     const_cast<State&>(state).bug << "Closest food is " << closestFood.row << ":" << closestFood.col << std::endl;
+    const_cast<State&>(state).bug << "Exit Ant::_findClosestFood()" << std::endl;
 
     return closestFood;
 }
@@ -285,7 +282,7 @@ void Ant::_makeMove(State& state, int direction) {
     const_cast<State&>(state).bug << "Destination " << destination.row << ":" << destination.col << std::endl;
 
     // Si on se dirige vers une case occupée par une fourmi à nous
-    if(state.isAntPosition(destination)) {
+    if(!state.isLocationSafe(destination)) {
         return;
     }
 

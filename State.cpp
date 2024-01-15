@@ -44,7 +44,6 @@ void State::makeMove(const Location &loc, int direction)
     if(!grid[nLoc.row][nLoc.col].isWater) {
         grid[nLoc.row][nLoc.col].ant = grid[loc.row][loc.col].ant;
         grid[loc.row][loc.col].ant = -1;
-
     }
 };
 
@@ -61,21 +60,13 @@ double State::distance(const Location &loc1, const Location &loc2) const
 //returns the new location from moving in a given direction with the edges wrapped
 Location State::getLocation(const Location &loc, int direction) const
 {
-    // Gros bug ici, retourne (11:65) quand loc = (9:65) et destination = 4
     int nLocRow = (loc.row + DIRECTIONS[direction][0] + rows) % rows;
     int nLocCol = (loc.col + DIRECTIONS[direction][1] + cols) % cols;
-
-    if(loc.row == 9 && loc.col == 65) {
-        const_cast<State&>(*this).bug << "State::getLocation()" << std::endl;
-        const_cast<State&>(*this).bug << "Loc " << loc.row << ":" << loc.col << std::endl;
-        const_cast<State&>(*this).bug << "Direction " << direction << std::endl;
-        const_cast<State&>(*this).bug << "nLoc " << nLocRow << ":" << nLocCol << std::endl;
-    }
 
     return Location(nLocRow, nLocCol);
 };
 
-bool State::isLocationValid(const Location& location) const {
+bool State::isLocationReachable(const Location& location) const {
     // LA Location doit être dans la grille
     if(location.row < 0 || location.row >= rows || location.col < 0 || location.col >= cols)
         return false;
@@ -87,13 +78,12 @@ bool State::isLocationValid(const Location& location) const {
     return true;
 }
 
-bool State::isAntPosition(const Location& location) {
+bool State::isLocationSafe(const Location& location) {
     if(grid[location.row][location.col].ant == 0) {
-        return true;
-    }
-    else {
         return false;
     }
+
+    return !grid[location.row][location.col].isFood;
 }
 
 /*

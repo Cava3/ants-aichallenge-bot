@@ -27,4 +27,9 @@ struct Location
     {
         return !(*this == other);
     }
+
+    Location operator+(const Location& loc2) const
+    {
+        return Location(row + loc2.row, col + loc2.col);
+    }
 };
