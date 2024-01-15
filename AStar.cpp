@@ -19,11 +19,13 @@ AStar::AStar() {
 //==========================================================================
 
 // Retourne le chemin calculé
-std::vector<Location> AStar::getPath() {
+std::vector<Location> AStar::getPath(const State& state) {
     std::vector<Location> path;
+    const_cast<State&>(state).bug << "ASTAR ! Path size : " << _path.size() << std::endl;
     // Penser à retourner le chemin dans le bon sens
     for(std::vector<Node*>::reverse_iterator it = _path.rbegin(); it != _path.rend(); ++it) {
         path.push_back((*it)->location);
+        const_cast<State&>(state).bug << "ASTAR ! " << (*it)->location.col << "," << (*it)->location.row << std::endl;
     }
 
     return path;

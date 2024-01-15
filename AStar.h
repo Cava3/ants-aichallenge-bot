@@ -34,7 +34,7 @@ class AStar {
     public :
         AStar();
 
-        std::vector<Location> getPath();
+        std::vector<Location> getPath(const State& state);
         void pathfind(const State& state, const Location& start, const Location& end);
         void reset();
 };

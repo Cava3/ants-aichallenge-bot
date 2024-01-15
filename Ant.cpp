@@ -27,13 +27,15 @@ void Ant::playTurn(State& state, double timeLimit) {
     const_cast<State&>(state).bug << "Ant " << id << " is playing" << std::endl;
     const_cast<State&>(state).bug << "Location " << _position.row << ":" << _position.col << std::endl;
 
-    Location nLoc = takeDecision(state, timeLimit);
+    Location nextLocation = takeDecision(state, timeLimit);
+    const_cast<State&>(state).bug << "Next location ## : " << nextLocation.row << ":" << nextLocation.col << std::endl;
 
-    if(nLoc != _destination) {
-        _setDestination(state, nLoc);
+    if(nextLocation == Location(-1, -1)) {
+        const_cast<State&>(state).bug << "Ant " << id << " has no decision" << std::endl;
+        return;
     }
 
-    int direction = _selectDirection(state, nLoc, timeLimit);
+    int direction = _selectDirection(state, nextLocation, timeLimit);
 
     if(direction == -1) {
         const_cast<State&>(state).bug << "Ant " << id << " goes nowhere" << std::endl;
@@ -45,20 +47,27 @@ void Ant::playTurn(State& state, double timeLimit) {
 
 void Ant::_setDestination(const State& state, Location location) {
     const_cast<State&>(state).bug << "Ant::_setDestination()" << std::endl;
+    const_cast<State&>(state).bug << "From : " << _position.col << "," << _position.row << std::endl;
+    const_cast<State&>(state).bug << "To : " << _destination.col << "," << _destination.row << std::endl;
+
     _destination = location;
     _pathfinder.pathfind(state, _position, _destination);
-    _path = _pathfinder.getPath();
+    const_cast<State&>(state).bug << "Ant::_setDestination() : Calculated" << std::endl;
+    _path = _pathfinder.getPath(state);
+    const_cast<State&>(state).bug << "Ant::_setDestination() : Path size : " << _path.size() << std::endl;
 
     if(_path.size() == 0) {
         const_cast<State&>(state).bug << "/!\\ Empty path" << std::endl;
     }
+
+    const_cast<State&>(state).bug << "Exit Ant::_setDestination()" << std::endl;
 }
 
 int Ant::_selectDirection(const State &state, Location nLoc, double timeLimit)
 {
     const_cast<State&>(state).bug << "Ant::_selectDirection()" << std::endl;
 
-    int direction;
+    int direction = -1;
 
     // Mettre ailleurs
     if (_path.size() == 0)
@@ -76,6 +85,11 @@ int Ant::_selectDirection(const State &state, Location nLoc, double timeLimit)
             direction = i;
             break;
         }
+    }
+
+    if(direction == -1) {
+        const_cast<State&>(state).bug << "/!\\ No direction found" << std::endl;
+        return -1;
     }
 
     const_cast<State&>(state).bug << "Ant " << id << " goes " << direction << std::endl;
@@ -115,8 +129,10 @@ Location Ant::_findClosestFood(const State &state)
 
 Location Ant::takeDecision(const State &state, double timeLimit)
 {
-    Location closestFood;
+    Location nextMove;
     Location randomLocation;
+
+    const_cast<State&>(state).bug << "Ant::takeDecision()" << std::endl;
 
     switch (state.playstyle)
     {
@@ -133,144 +149,80 @@ Location Ant::takeDecision(const State &state, double timeLimit)
 
                 // On trouve la Location opposée
                 Location oppositeLocation = Location(_position.row+diffY, _position.col+diffX);
-                if(state.grid[oppositeLocation.row][oppositeLocation.col].isWater) { // FIXME: Remplacer par isLocationValid
-                    // Si on ne peut pas aller à l'endroit opposé, on essaye de pathfind en dehors de la vue.
-                    oppositeLocation = Location(_position.row+diffY*5, _position.col-diffX*5);
+                if(!state.isLocationReachable(oppositeLocation)) {
+                    // Si on ne peut pas aller à l'endroit opposé, on retourne à la fourmilière
+                    oppositeLocation = state.myHills[0];
                 }
+                _setDestination(state, oppositeLocation);
 
-                return oppositeLocation;
+                return _path[0];
             }
         }
 
         // Si pas d'ennemi proche, on cherche de la nourriture
-        closestFood = _findClosestFood(state);
-        if (closestFood != Location(-1, -1)) {
-            if(_destination == closestFood) {
-                _path.erase(_path.begin());
-                return _path[0];
-            } else {
-                _setDestination(state, closestFood);
-                return _path[0];
-            }
+        nextMove = _tryToFindFood(state);
+        if(nextMove != Location(-1, -1)) {
+            return nextMove;
         }
 
         // Si pas de nourriture, on explore
-        // Si on est encore loin de la destination actuelle, on continue
-        if (_path.size() > 3) {
-            _path.erase(_path.begin());
-            return _path[0];
+        nextMove = _tryToExplore(state);
+        if(nextMove != Location(-1, -1)) {
+            return nextMove;
         }
 
-        // Sinon on explore un autre endroit
-        randomLocation = Location(-1, -1);
-        while (randomLocation == Location(-1, -1)) {
-            int randomRow = _position.row + (rand() % 10) - 5;
-            int randomCol = _position.col + (rand() % 10) - 5;
-            if (!state.grid[randomRow][randomCol].isWater) { // FIXME: Remplacer par isLocationValid
-                randomLocation = Location(randomRow, randomCol);
-            }
-        }
-        _setDestination(state, randomLocation);
-        return _path[0];
+        return _path[0]; // Ne devrait pas arriver, mais on sait jamais
         break;
 
     // Style de jeu du milieu de partie
     // Chercher de la nourriture ou explorer
     case PLAYSTYLE_EAT:
         // On cherche en priorité de la nourriture
-        closestFood = _findClosestFood(state);
-        if (closestFood != Location(-1, -1)) {
-            if(_destination == closestFood) {
-                _path.erase(_path.begin());
-                return _path[0];
-            } else {
-                _setDestination(state, closestFood);
-                return _path[0];
-            }
+        nextMove = _tryToFindFood(state);
+        if(nextMove != Location(-1, -1)) {
+            return nextMove;
         }
 
         // Si pas de nourriture, on explore
-        // Si on est encore loin de la destination actuelle, on continue
-        if (_path.size() > 3) {
-            _path.erase(_path.begin());
-            return _path[0];
+        nextMove = _tryToExplore(state);
+        if(nextMove != Location(-1, -1)) {
+            return nextMove;
         }
 
-        // Sinon on explore un autre endroit
-        randomLocation = Location(-1, -1);
-        while (randomLocation == Location(-1, -1)) {
-            int randomRow = _position.row + (rand() % 10) - 5;
-            int randomCol = _position.col + (rand() % 10) - 5;
-            if (!state.grid[randomRow][randomCol].isWater) { // TODO: Remplacer par isLocationValid
-                randomLocation = Location(randomRow, randomCol);
-            }
-        }
-        _setDestination(state, randomLocation);
-        return _path[0];
+        return _path[0]; // Ne devrait pas arriver, mais on sait jamais
         break;
     
     // Style de jeu de la fin de partie
-    // Nourriture si très proche, sinon attaquer les nids
+    // On récolte la bouffe, ou on défonce du nid ou on explore
     case PLAYSTYLE_ANIHILATE:
         // On cherche en priorité de la nourriture
-        // TODO: Proche
-        closestFood = _findClosestFood(state);
-        if (closestFood != Location(-1, -1)) {
-            if(_destination == closestFood) {
-                _path.erase(_path.begin());
-                return _path[0];
-            } else {
-                _setDestination(state, closestFood);
-                return _path[0];
-            }
+        nextMove = _tryToFindFood(state);
+        if(nextMove != Location(-1, -1)) {
+            const_cast<State&>(state).bug << "Ant::takeDecision() -> Anihilate : Food found" << std::endl;
+            return nextMove;
         }
 
-        // Si pas de nourriture, on attaque les nids
         // Attaque des nids
         if(state.enemyHills.size() > 0) {
-            Location closestHill = state.enemyHills[0];
-            int closestHillDistance = state.distance(_position, closestHill);
-            for (int i = 0; i < state.enemyHills.size(); i++) {
-                int currentHillDistance = state.distance(_position, state.enemyHills[i]);
-                if (currentHillDistance < closestHillDistance) {
-                    closestHill = state.enemyHills[i];
-                    closestHillDistance = currentHillDistance;
-                }
+            nextMove = _tryToAnihilate(state);
+            if(nextMove != Location(-1, -1)) {
+                return nextMove;
             }
-
-            if(_destination == closestHill) {
-                _path.erase(_path.begin());
-                return _path[0];
-            } else {
-                _setDestination(state, closestHill); // FIXME: Supprimer de la mémoire quand on a détruit le nid
-                return _path[0];
-            }
-        } else {
-            // Si pas de nids, on explore
-            // Si on est encore loin de la destination actuelle, on continue
-            if (_path.size() > 3) {
-                _path.erase(_path.begin());
-                return _path[0];
-            }
-
-            // Sinon on explore un autre endroit
-            randomLocation = Location(-1, -1);
-            while (randomLocation == Location(-1, -1)) {
-                int randomRow = _position.row + (rand() % 10) - 5;
-                int randomCol = _position.col + (rand() % 10) - 5;
-                if (!state.grid[randomRow][randomCol].isWater) { // TODO: Remplacer par isLocationValid
-                    randomLocation = Location(randomRow, randomCol);
-                }
-            }
-            _setDestination(state, randomLocation);
-            return _path[0];
+        }
+        // Si pas de nids, on explore
+        nextMove = _tryToExplore(state);
+        if(nextMove != Location(-1, -1)) {
+            return nextMove;
         }
 
+        return _path[0]; // Ne devrait pas arriver, mais on sait jamais
         break;
     default:
+    return _path[0]; // N'a aucune chance d'arriver, juste un garde-fou
         break;
     }
 
+    const_cast<State&>(state).bug << "Exit Ant::takeDecision()" << std::endl;
     return Location(-1, -1);
 }
 
@@ -299,4 +251,69 @@ void Ant::validateLastTurnMove(State& state, bool validated) {
         _nextTurnPosition = _position;
         _setDestination(state, _destination);
     }
+}
+
+Location Ant::_tryToFindFood(const State& state) {
+    const_cast<State&>(state).bug << "Ant::_tryToFindFood()" << std::endl;
+    Location closestFood = _findClosestFood(state);
+    if(closestFood == Location(-1, -1)) {
+        return Location(-1, -1);
+    }
+
+    if(_destination == closestFood) {
+        const_cast<State&>(state).bug << "Ant::_tryToFindFood() : Already on the way to food" << std::endl;
+        return _path[0];
+    } else {
+        _setDestination(state, closestFood);
+        const_cast<State&>(state).bug << "Ant::_tryToFindFood() : New destination" << std::endl;
+        const_cast<State&>(state).bug << "Ant::_tryToFindFood() : next move = " << _path[0].row << ":" << _path[0].col << std::endl;
+        return _path[0];
+    }
+}
+
+Location Ant::_tryToExplore(const State& state) {
+    const_cast<State&>(state).bug << "Ant::_tryToExplore()" << std::endl;
+    // Si on est encore loin de la destination actuelle, on continue
+    if(_path.size() > 3) {
+        return _path[0];
+    }
+
+    // Sinon on explore un autre endroit
+    Location randomLocation = Location(-1, -1);
+
+    while (randomLocation == Location(-1, -1)) {
+        int randomRow = _position.row + (rand() % 20) - 10;
+        int randomCol = _position.col + (rand() % 20) - 10;
+        if (state.isLocationReachable(Location(randomRow, randomCol)) && Location(randomRow, randomCol) != _position) {
+            randomLocation = Location(randomRow, randomCol);
+        }
+    }
+
+    _setDestination(state, randomLocation);
+    return _path[0];
+}
+
+Location Ant::_tryToAnihilate(const State& state) {
+    const_cast<State&>(state).bug << "Ant::_tryToAnihilate()" << std::endl;
+    // Attaque des nids
+    if(state.enemyHills.size() > 0) {
+        Location closestHill = state.enemyHills[0];
+        int closestHillDistance = state.distance(_position, closestHill);
+
+        for (int i = 0; i < state.enemyHills.size(); i++) {
+            int currentHillDistance = state.distance(_position, state.enemyHills[i]);
+            if (currentHillDistance < closestHillDistance) {
+                closestHill = state.enemyHills[i];
+                closestHillDistance = currentHillDistance;
+            }
+        }
+
+        if(_destination == closestHill) {
+            return _path[0];
+        } else {
+            _setDestination(state, closestHill); // FIXME: Supprimer de la mémoire quand on a détruit le nid
+            return _path[0];
+        }
+    }
+    return Location(-1, -1);
 }

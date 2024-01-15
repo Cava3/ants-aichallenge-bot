@@ -18,6 +18,9 @@ class Ant
         void _setDestination(const State& state, Location location);
         Location _findClosestFood(const State& state);
         void _makeMove(State& state, int direction);
+        Location _tryToFindFood(const State& state);
+        Location _tryToExplore(const State& state);
+        Location _tryToAnihilate(const State& state);
 
     public:
         Ant(int id, State& state, Location location);

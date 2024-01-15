@@ -142,6 +142,7 @@ void State::addFromMemory() {
 
 // Remembers the waters from the map
 void State::updateMemory() {
+    bug << "Updating memory" << std::endl;
     waters.clear();
     enemyHills.clear();
 
