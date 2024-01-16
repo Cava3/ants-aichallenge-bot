@@ -7,10 +7,11 @@
 #endif
 
 /*
-    struct for debugging - this is gross but can be used pretty much like an ofstream,
-                           except the debug messages are stripped while compiling if
-                           DEBUG is not defined.
-    example:
+    struct de debuggage
+    Pour l'utiliser, il suffit de déclarer une variable de type Bug et de l'ouvrir
+    avec le nom du fichier de sortie en paramètre de la méthode open.
+    Ensuite, on peut utiliser l'opérateur << comme pour un flux de sortie.
+    Par exemple:
         Bug bug;
         bug.open("./debug.txt");
         bug << state << endl;
@@ -23,24 +24,24 @@ struct Bug
 
     Bug() {};
 
-    //opens the specified file
+    // Ouvre le fichier spécifié
     inline void open(const std::string &filename)
     {
         #ifdef DEBUG
             file.open(filename.c_str());
         #endif
-    };
+    }
 
-    //closes the ofstream
+    // Ferme le fichier
     inline void close()
     {
         #ifdef DEBUG
             file.close();
         #endif
-    };
+    }
 };
 
-//output function for endl
+// Surcharge de l'opérateur << 
 inline Bug& operator<<(Bug &bug, std::ostream& (*manipulator)(std::ostream&))
 {
     #ifdef DEBUG
@@ -50,7 +51,7 @@ inline Bug& operator<<(Bug &bug, std::ostream& (*manipulator)(std::ostream&))
     return bug;
 };
 
-//output function
+// Surcharge de l'opérateur <<
 template <class T>
 inline Bug& operator<<(Bug &bug, const T &t)
 {
