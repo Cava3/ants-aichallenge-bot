@@ -5,18 +5,17 @@
 #include "Bot.h"
 
 
-//constructor
 Bot::Bot() {
 };
 
-//plays a single game of Ants.
+// Lancement d'une partie
 void Bot::playGame() {
-    //reads the game parameters and sets up
+    // Initialisation de l'état
     std::cin >> state;
     state.setup();
     endTurn();
 
-    //continues making moves while the game is not over
+    // Boucle principale : on joue tant qu'on nous donne des informations
     while(std::cin >> state)
     {
         state.updateVisionInformation();
@@ -29,7 +28,7 @@ void Bot::playGame() {
     }
 };
 
-//makes the bots moves for the turn
+// Lance le déplacement pour chaque fourmi
 void Bot::makeMoves() {
     state.bug << "turn " << state.turn << ":" << std::endl;
     state.bug << state << std::endl;
@@ -38,23 +37,14 @@ void Bot::makeMoves() {
     // Pour chaque fourmi (son index dans la liste)
     for(int ant=0; ant<(int)state.myAnts.size(); ant++) {
         double timePerAnt = state.turntime/(int)state.myAnts.size();
-        // int direction = selectDirection(ant, state, timePerAnt);
 
-        // if(direction == -1) {
-        //     const_cast<State&>(state).bug << "ant " << ant << " goes nowhere" << std::endl;
-        //     continue;
-        // }
-
-        // const_cast<State&>(state).bug << "ant " << ant << " goes " << direction << std::endl;
-        // state.makeMove(state.myAnts[ant], direction);
-
-        state.myAnts[ant].playTurn(state, timePerAnt);
+        state.myAnts[ant].playTurn(state, timePerAnt); // On la fait jouer
     }
 
     state.bug << "time taken: " << state.timer.getTime() << "ms" << std::endl << std::endl;
 };
 
-//finishes the turn
+// Fin du tour
 void Bot::endTurn() {
     if(state.turn > 0)
         state.reset();
