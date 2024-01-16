@@ -145,7 +145,7 @@ void AStar::_addAdjacentNodes(Node* node_ptr, const State& state_ref) {
                 }
             }
 
-            adjacentNode_ptr->previousNode = previousNode_ptr;
+            adjacentNode_ptr->previousNode_ptr = previousNode_ptr;
             adjacentNode_ptr->distanceFromStart = previousNode_ptr->distanceFromStart + 1;
 
             _toVisit.push_back(adjacentNode_ptr);
@@ -186,7 +186,7 @@ void AStar::_validatePath(Node* node_ptr) {
     _path.clear();
     while(currentNode->distanceFromStart > 0) {
         _path.push_back(currentNode); // Le chemin commence par la fin, on l'inversera à la récupération.
-        currentNode = currentNode->previousNode;
+        currentNode = currentNode->previousNode_ptr;
     }
 }
 
