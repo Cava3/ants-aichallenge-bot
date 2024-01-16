@@ -3,7 +3,7 @@ CFLAGS=-O3 -funroll-loops -c
 LDFLAGS=-O2 -lm
 SOURCES=$(wildcard *.cpp)
 OBJECTS=$(addsuffix .o, $(basename ${SOURCES}))
-EXECUTABLE=Bot
+EXECUTABLE=Biouman
 
 #Uncomment the following to enable debugging
 #CFLAGS+=-g -DDEBUG
