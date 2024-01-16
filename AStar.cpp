@@ -29,25 +29,25 @@ std::vector<Location> AStar::getPath() {
     return path;
 }
 
-// Lance le pathfind dans le contexte de `state_ref`, de `start` à `end`
-void AStar::pathfind(const State& state_ref, const Location& start, const Location& end){
+// Lance le pathfind dans le contexte de `state_ref`, de `start_ref` à `end`
+void AStar::pathfind(const State& state_ref, const Location& start_ref, const Location& end_ref){
     _reset();
-    _endLocation = end;
+    _endLocation = end_ref;
     _rows = state_ref.rows;
     _cols = state_ref.cols;
-    _maxDistance = 20 * (int) state_ref.distance(start, end); // Arbitraire
+    _maxDistance = 20 * (int) state_ref.distance(start_ref, end_ref); // Arbitraire
      
 
-    Node* startNode = _createNode_ptr(start, end);
-    startNode->distanceFromStart = 0;
-    _toVisit.push_back(startNode);
+    Node* startNode_ptr = _createNode_ptr(start_ref, end_ref);
+    startNode_ptr->distanceFromStart = 0;
+    _toVisit.push_back(startNode_ptr);
 
-    if(start == end || !state_ref.isLocationReachable(end)) {
-        _validatePath(startNode);
+    if(start_ref == end_ref || !state_ref.isLocationReachable(end_ref)) {
+        _validatePath(startNode_ptr);
         return;
     }
 
-    _pathfindLoop(state_ref, end);
+    _pathfindLoop(state_ref, end_ref);
 }
 
 // Remet à 0 le calculateur. Est appelé automatiquement par `pathfind`
@@ -60,17 +60,17 @@ void AStar::reset() {
 //==========================================================================
 
 
-void AStar::_pathfindLoop(const State& state_ref, const Location& end) {
+void AStar::_pathfindLoop(const State& state_ref, const Location& end_ref) {
     while(!_toVisit.empty() && const_cast<State&>(state_ref).timer.getTime() < state_ref.turntime - 20) {
         // On récupère le meilleur noeud à visiter
-        Node* bestNode = _getBestFromList_ptr(state_ref);
+        Node* bestNode_ref = _getBestFromList_ptr(state_ref);
 
         // On choisis le noeud à visiter et on le visite
-        _visitNode(bestNode, state_ref, end);
+        _visitNode(bestNode_ref, state_ref, end_ref);
     }
 }
 
-void AStar::_visitNode(Node* node_ptr, const State& state_ref, const Location& end) {
+void AStar::_visitNode(Node* node_ptr, const State& state_ref, const Location& end_ref) {
     // On valide la visite du noeud
     node_ptr->explored = true;
     _toVisit.erase(std::find(_toVisit.begin(), _toVisit.end(), node_ptr));
@@ -82,7 +82,7 @@ void AStar::_visitNode(Node* node_ptr, const State& state_ref, const Location& e
     }
 
     // Si on est arrivé à la fin, on stock le chemin
-    if(node_ptr->location == end) {
+    if(node_ptr->location == end_ref) {
         _maxDistance = node_ptr->distanceFromStart;
         _validatePath(node_ptr);
         return;
@@ -155,13 +155,13 @@ void AStar::_addAdjacentNodes(Node* node_ptr, const State& state_ref) {
 
 // Retourne le meilleur noeud à visiter
 Node* AStar::_getBestFromList_ptr(const State& state_ref) {
-    Node* bestNode = _toVisit[0];
-    for(std::vector<Node*>::iterator it = _toVisit.begin(); it != _toVisit.end(); ++it) {
-        if(_getNodeScore(*it, state_ref) < _getNodeScore(bestNode, state_ref)) {
-            bestNode = *it;
+    Node* bestNode_ref = _toVisit[0];
+    for(std::vector<Node*>::iterator iterator = _toVisit.begin(); iterator != _toVisit.end(); ++iterator) {
+        if(_getNodeScore(*iterator, state_ref) < _getNodeScore(bestNode_ref, state_ref)) {
+            bestNode_ref = *iterator;
         }
     }
-    return bestNode;
+    return bestNode_ref;
 }
 
 // Retourne le score d'un noeud
@@ -200,7 +200,7 @@ double AStar::_distanceToEnd(const Node* node_ptr, const State& state_ref) { // 
     return sqrt(dr*dr + dc*dc);
 };
 
-Node* AStar::_createNode_ptr(const Location& location, const Location& end) {
-    Node* node_ptr = new Node(location, end);
+Node* AStar::_createNode_ptr(const Location& location, const Location& end_ref) {
+    Node* node_ptr = new Node(location, end_ref);
     return node_ptr;
 }
