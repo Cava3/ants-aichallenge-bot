@@ -50,7 +50,6 @@ struct State
 
     std::vector<std::vector<Square>> grid;
     std::vector<Ant> myAnts;
-    // std::vector<Location> myAnts;
     std::vector<Location> enemyAnts, myHills, enemyHills, food, waters;
 
     Timer timer;
@@ -76,9 +75,9 @@ struct State
     void addFromMemory();
     void updateMemory();
     void updatePlaystyle();
-    Ant* findAnt(const Location pos, int turn);
+    Ant* findAnt_ptr(const Location pos, int turn);
     void deleteAnt(int id);
 };
 
-std::ostream& operator<<(std::ostream &os, const State &state);
-std::istream& operator>>(std::istream &is, State &state);
+std::ostream& operator<<(std::ostream& os_ref, const State& state_ref);
+std::istream& operator>>(std::istream& is_ref, State& state_ref);
