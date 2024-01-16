@@ -14,20 +14,20 @@ class Ant
         Location _destination;
         AStar _pathfinder;
         std::vector<Location> _path;
-        int _selectDirection(const State& state, Location nLoc, double timeLimit);
-        void _setDestination(const State& state, Location location);
-        Location _findClosestFood(const State& state);
-        void _makeMove(State& state, int direction);
+        int _selectDirection(const State& state_ref, Location nLoc, double timeLimit);
+        void _setDestination(const State& state_ref, Location location);
+        Location _findClosestFood(const State& state_ref);
+        void _makeMove(State& state_ref, int direction);
 
     public:
-        Ant(int id, State& state, Location location);
+        Ant(int id, State& state_ref, Location location);
         int id;
         Location getPosition();
         Location getNextTurnPosition();
         Location getDestination();
-        void playTurn(State& state, double timeLimit);
-        Location takeDecision(const State& state, double timeLimit);
-        void validateLastTurnMove(State& state, bool validated);
+        void playTurn(State& state_ref, double timeLimit);
+        Location takeDecision(const State& state_ref, double timeLimit);
+        void validateLastTurnMove(State& state_ref, bool validated);
 };
 
 
