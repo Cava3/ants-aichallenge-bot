@@ -42,22 +42,22 @@ struct Bug
 };
 
 // Surcharge de l'opérateur << 
-inline Bug& operator<<(Bug &bug, std::ostream& (*manipulator)(std::ostream&))
+inline Bug& operator<<(Bug &bug_ref, std::ostream& (*manipulator)(std::ostream&))
 {
     #ifdef DEBUG
-        bug.file << manipulator;
+        bug_ref.file << manipulator;
     #endif
 
-    return bug;
+    return bug_ref;
 };
 
 // Surcharge de l'opérateur <<
 template <class T>
-inline Bug& operator<<(Bug &bug, const T &t)
+inline Bug& operator<<(Bug &bug_ref, const T &t)
 {
     #ifdef DEBUG
-        bug.file << t;
+        bug_ref.file << t;
     #endif
 
-    return bug;
+    return bug_ref;
 };
