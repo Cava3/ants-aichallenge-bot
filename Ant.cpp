@@ -117,6 +117,7 @@ Location Ant::takeDecision(const State& state_ref, double timeLimit) {
     switch (state_ref.playstyle) {
         // Style de jeu du début de partie (Moins de 10 fourmis)
         // Fuir les ennemis ou chercher de la nourriture ou explorer
+        // XXX: Les playstyles sont découpés en plusieurs fonctions sur une autre branche, mais qui ne fonctionne pas...
         case PLAYSTYLE_FLEE:
 
             // Si un ennemi est proche, on fuit
@@ -215,7 +216,7 @@ Location Ant::takeDecision(const State& state_ref, double timeLimit) {
         // Nourriture si très proche, sinon attaquer les nids
         case PLAYSTYLE_ANIHILATE:
             // On cherche en priorité de la nourriture
-            // TODO: Proche
+            // TODO: Proche uniquement
             closestFood = _findClosestFood(state_ref);
 
             if (closestFood != Location(-1, -1)) {
