@@ -1,7 +1,7 @@
 #pragma once
 
 /*
-    struct for representing locations in the grid.
+    struct représentant une position sur la carte
 */
 struct Location
 {
@@ -18,16 +18,19 @@ struct Location
         col = c;
     };
 
+    // Opérateur de comparaison ==
     bool operator==(const Location& other) const
     {
         return row == other.row && col == other.col;
     }
 
+    // Opérateur de comparaison != (inverse de ==)
     bool operator!=(const Location& other) const
     {
         return !(*this == other);
     }
 
+    // Opérateur d'addition entre deux Location
     Location operator+(const Location& loc2) const
     {
         return Location(row + loc2.row, col + loc2.col);
