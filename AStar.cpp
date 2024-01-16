@@ -19,26 +19,26 @@ AStar::AStar() {
 //==========================================================================
 
 // Retourne le chemin calculé
-std::vector<Location> AStar::getPath(const State& state) {
-    std::vector<Location> path;
+std::vector<Location*>* AStar::getPath(const State& state) {
+    std::vector<Location*>* path = new std::vector<Location*>();
     const_cast<State&>(state).bug << "ASTAR ! Path size : " << _path.size() << std::endl;
     // Penser à retourner le chemin dans le bon sens
     for(std::vector<Node*>::reverse_iterator it = _path.rbegin(); it != _path.rend(); ++it) {
-        path.push_back((*it)->location);
+        path->push_back(new Location((*it)->location));
         const_cast<State&>(state).bug << "ASTAR ! " << (*it)->location.col << "," << (*it)->location.row << std::endl;
     }
 
-    const_cast<State&>(state).bug << "ASTAR ! Path size : " << path.size() << std::endl;
+    const_cast<State&>(state).bug << "ASTAR ! Path size : " << path->size() << std::endl;
     return path;
 }
 
 // Lance le pathfind dans le contexte de `state`, de `start` à `end`
-void AStar::pathfind(const State& state, const Location& start, const Location& end){
+void AStar::pathfind(const State& state, Location& start, Location& end){
     _reset();
     _endLocation = end;
     _rows = state.rows;
     _cols = state.cols;
-    _maxDistance = std::min(20 * (int) state.distance(start, end), _rows+_cols); // Hard limit arbitraire
+    _maxDistance = std::min(50 * (int) state.distance(start, end), _rows+_cols); // Hard limit arbitraire
      
 
     Node* startNode = _createNode(start, end);
@@ -176,7 +176,7 @@ Node* AStar::_getBestFromList(const State& state) {
 }
 
 // Retourne le score d'un noeud
-double AStar::_getNodeScore(const Node* node_ptr, const State& state) {
+double AStar::_getNodeScore(Node* node_ptr, const State& state) {
     return node_ptr->distanceFromStart + _distanceToEnd(node_ptr, state);
 }
 
@@ -201,7 +201,7 @@ void AStar::_validatePath(Node* node_ptr) {
     }
 }
 
-double AStar::_distanceToEnd(const Node* node_ptr, const State& state) { // Volé depuis State
+double AStar::_distanceToEnd(Node* node_ptr, const State& state) { // Volé depuis State
     Location loc1 = node_ptr->location;
     Location loc2 = node_ptr->destination;
     int d1 = abs(loc1.row-loc2.row),
@@ -211,7 +211,7 @@ double AStar::_distanceToEnd(const Node* node_ptr, const State& state) { // Vol�
     return sqrt(dr*dr + dc*dc);
 };
 
-Node* AStar::_createNode(const Location& location, const Location& end) {
+Node* AStar::_createNode(Location& location, Location& end) {
     Node* node_ptr = new Node(location, end);
     return node_ptr;
 }

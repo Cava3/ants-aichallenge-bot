@@ -10,13 +10,18 @@ struct Location
     Location()
     {
         row = col = 0;
-    };
+    }
 
     Location(int r, int c)
     {
         row = r;
         col = c;
-    };
+    }
+
+    Location(Location& l){
+        row = l.row;
+        col = l.col;
+    }
 
     bool operator==(const Location& other) const
     {

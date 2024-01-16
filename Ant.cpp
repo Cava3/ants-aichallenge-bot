@@ -48,15 +48,15 @@ void Ant::playTurn(State& state, double timeLimit) {
 void Ant::_setDestination(const State& state, Location location) {
     const_cast<State&>(state).bug << "Ant::_setDestination()" << std::endl;
     const_cast<State&>(state).bug << "From : " << _position.col << "," << _position.row << std::endl;
-    const_cast<State&>(state).bug << "To : " << _destination.col << "," << _destination.row << std::endl;
+    const_cast<State&>(state).bug << "To : " << location.col << "," << location.row << std::endl;
 
     _destination = location;
     _pathfinder.pathfind(state, _position, _destination);
     const_cast<State&>(state).bug << "Ant::_setDestination() : Calculated" << std::endl;
     _path = _pathfinder.getPath(state);
-    const_cast<State&>(state).bug << "Ant::_setDestination() : Path size : " << _path.size() << std::endl;
+    const_cast<State&>(state).bug << "Ant::_setDestination() : Path size : " << _path->size() << std::endl;
 
-    if(_path.size() == 0) {
+    if(_path->size() == 0) {
         const_cast<State&>(state).bug << "/!\\ Empty path" << std::endl;
     }
 
@@ -70,7 +70,7 @@ int Ant::_selectDirection(const State &state, Location nLoc, double timeLimit)
     int direction = -1;
 
     // Mettre ailleurs
-    if (_path.size() == 0)
+    if (_path->size() == 0)
     {
         const_cast<State &>(state).bug << "/!\\ Empty path" << std::endl;
         return -1;
@@ -155,7 +155,7 @@ Location Ant::takeDecision(const State &state, double timeLimit)
                 }
                 _setDestination(state, oppositeLocation);
 
-                return _path[0];
+                return *(*_path)[0];
             }
         }
 
@@ -171,7 +171,7 @@ Location Ant::takeDecision(const State &state, double timeLimit)
             return nextMove;
         }
 
-        return _path[0]; // Ne devrait pas arriver, mais on sait jamais
+        return *(*_path)[0]; // Ne devrait pas arriver, mais on sait jamais
         break;
 
     // Style de jeu du milieu de partie
@@ -189,7 +189,7 @@ Location Ant::takeDecision(const State &state, double timeLimit)
             return nextMove;
         }
 
-        return _path[0]; // Ne devrait pas arriver, mais on sait jamais
+        return *(*_path)[0]; // Ne devrait pas arriver, mais on sait jamais
         break;
     
     // Style de jeu de la fin de partie
@@ -215,10 +215,10 @@ Location Ant::takeDecision(const State &state, double timeLimit)
             return nextMove;
         }
 
-        return _path[0]; // Ne devrait pas arriver, mais on sait jamais
+        return *(*_path)[0]; // Ne devrait pas arriver, mais on sait jamais
         break;
     default:
-    return _path[0]; // N'a aucune chance d'arriver, juste un garde-fou
+    return *(*_path)[0]; // N'a aucune chance d'arriver, juste un garde-fou
         break;
     }
 
@@ -245,7 +245,7 @@ void Ant::_makeMove(State& state, int direction) {
 void Ant::validateLastTurnMove(State& state, bool validated) {
     if(validated) {
         _position = _nextTurnPosition;
-        _path.erase(_path.begin());
+        _path->erase(_path->begin());
     }
     else {
         _nextTurnPosition = _position;
@@ -262,20 +262,23 @@ Location Ant::_tryToFindFood(const State& state) {
 
     if(_destination == closestFood) {
         const_cast<State&>(state).bug << "Ant::_tryToFindFood() : Already on the way to food" << std::endl;
-        return _path[0];
+        const_cast<State&>(state).bug << _path->size() << std::endl;
+        return *(*_path)[0];
     } else {
         _setDestination(state, closestFood);
         const_cast<State&>(state).bug << "Ant::_tryToFindFood() : New destination" << std::endl;
-        const_cast<State&>(state).bug << "Ant::_tryToFindFood() : next move = " << _path[0].row << ":" << _path[0].col << std::endl;
-        return _path[0];
+        if(_path->size() == 0) {
+            return Location(-1, -1);
+        }   
+        return *(*_path)[0];
     }
 }
 
 Location Ant::_tryToExplore(const State& state) {
     const_cast<State&>(state).bug << "Ant::_tryToExplore()" << std::endl;
     // Si on est encore loin de la destination actuelle, on continue
-    if(_path.size() > 3) {
-        return _path[0];
+    if(_path->size() > 3) {
+        return *(*_path)[0];
     }
 
     // Sinon on explore un autre endroit
@@ -290,14 +293,14 @@ Location Ant::_tryToExplore(const State& state) {
     }
 
     _setDestination(state, randomLocation);
-    return _path[0];
+    return *(*_path)[0];
 }
 
 Location Ant::_tryToAnihilate(const State& state) {
     const_cast<State&>(state).bug << "Ant::_tryToAnihilate()" << std::endl;
     // Attaque des nids
     if(state.enemyHills.size() > 0) {
-        Location closestHill = state.enemyHills[0];
+        Location closestHill = const_cast<State&>(state).enemyHills[0];
         int closestHillDistance = state.distance(_position, closestHill);
 
         for (int i = 0; i < state.enemyHills.size(); i++) {
@@ -309,10 +312,10 @@ Location Ant::_tryToAnihilate(const State& state) {
         }
 
         if(_destination == closestHill) {
-            return _path[0];
+            return *(*_path)[0];
         } else {
             _setDestination(state, closestHill); // FIXME: Supprimer de la mémoire quand on a détruit le nid
-            return _path[0];
+            return *(*_path)[0];
         }
     }
     return Location(-1, -1);

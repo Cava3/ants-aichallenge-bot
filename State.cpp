@@ -105,7 +105,7 @@ void State::updateVisionInformation()
 
     for(int a=0; a<(int) myAnts.size(); a++)
     {
-        sLoc = myAnts[a].getPosition();
+        sLoc = myAnts[a]->getPosition();
         locQueue.push(sLoc);
 
         std::vector<std::vector<bool>> visited(rows, std::vector<bool>(cols, 0));
@@ -134,6 +134,7 @@ void State::updateVisionInformation()
 
 // Puts back remembered waters on the map
 void State::addFromMemory() {
+    bug << "Adding from memory" << std::endl;
     for(std::vector<Location>::iterator it = waters.begin(); it != waters.end(); ++it)
         if(!grid[it->row][it->col].isVisible)
             grid[it->row][it->col].isWater = true;
@@ -141,6 +142,7 @@ void State::addFromMemory() {
     for(std::vector<Location>::iterator it = enemyHills.begin(); it != enemyHills.end(); ++it)
         if(!grid[it->row][it->col].isVisible)
             grid[it->row][it->col].isHill = true;
+    bug << "Done" << std::endl;
 }
 
 // Remembers the waters from the map
@@ -179,14 +181,14 @@ Ant* State::findAnt(const Location pos, int turn) {
 
     for(int i = 0; i < myAnts.size(); i++) {
         if(turn == 0) {
-            if(pos == myAnts[i].getPosition()) {
-                ant = &myAnts[i];
+            if(pos == myAnts[i]->getPosition()) {
+                ant = myAnts[i];
                 break;
             }
         }
         else if (turn == 1) {
-            if(pos == myAnts[i].getNextTurnPosition()) {
-                ant = &myAnts[i];
+            if(pos == myAnts[i]->getNextTurnPosition()) {
+                ant = myAnts[i];
                 break;
             }
         }
@@ -201,9 +203,9 @@ void State::deleteAnt(int id) {
         std::remove_if(
             myAnts.begin(),
             myAnts.end(),
-            [id](const Ant &ant)
+            [id](const Ant* ant)
             {
-                return ant.id == id;
+                return ant->id == id;
             }
         ),
         myAnts.end()
@@ -346,7 +348,7 @@ std::istream& operator>>(std::istream &is, State &state)
                         else {
                             // New ant from the hill
                             state.antsId++;
-                            state.myAnts.push_back(Ant(state.antsId, state, Location(row, col)));
+                            state.myAnts.push_back(new Ant(state.antsId, state, Location(row, col)));
                         }
                     }
                 }

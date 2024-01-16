@@ -22,10 +22,10 @@ class AStar {
         int _rows, _cols;
 
         void _visitNode(Node* node, const State& state, const Location& end);
-        Node* _createNode(const Location& location, const Location& end);
-        double _distanceToEnd(const Node* node1, const State& state);
+        Node* _createNode(Location& location, Location& end);
+        double _distanceToEnd(Node* node1, const State& state);
         void _pathfindLoop(const State& state, const Location& end);
-        double _getNodeScore(const Node* node, const State& state);
+        double _getNodeScore(Node* node, const State& state);
         void _addAdjacentNodes(Node* node, const State& state);
         void _validatePath(Node* node);
         Node* _getBestFromList(const State& state);
@@ -34,7 +34,7 @@ class AStar {
     public :
         AStar();
 
-        std::vector<Location> getPath(const State& state);
-        void pathfind(const State& state, const Location& start, const Location& end);
+        std::vector<Location*>* getPath(const State& state);
+        void pathfind(const State& state, Location& start, Location& end);
         void reset();
 };

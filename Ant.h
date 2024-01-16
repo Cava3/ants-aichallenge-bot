@@ -13,7 +13,7 @@ class Ant
         Location _nextTurnPosition;
         Location _destination;
         AStar _pathfinder;
-        std::vector<Location> _path;
+        std::vector<Location*>* _path;
         int _selectDirection(const State& state, Location nLoc, double timeLimit);
         void _setDestination(const State& state, Location location);
         Location _findClosestFood(const State& state);

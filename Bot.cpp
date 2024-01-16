@@ -27,6 +27,8 @@ void Bot::playGame() {
         makeMoves();
 
         state.updateMemory();
+        // On attend 100 ms pour être sûr que le serveur ait le temps de répondre
+        while(state.timer.getTime() < 100);
         endTurn();
     }
 };
@@ -50,7 +52,7 @@ void Bot::makeMoves() {
         // const_cast<State&>(state).bug << "ant " << ant << " goes " << direction << std::endl;
         // state.makeMove(state.myAnts[ant], direction);
 
-        state.myAnts[ant].playTurn(state, timePerAnt);
+        state.myAnts[ant]->playTurn(state, timePerAnt);
     }
 
     state.bug << "time taken: " << state.timer.getTime() << "ms" << std::endl << std::endl;

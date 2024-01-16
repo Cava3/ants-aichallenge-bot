@@ -49,7 +49,7 @@ struct State
     int playstyle;
 
     std::vector<std::vector<Square>> grid;
-    std::vector<Ant> myAnts;
+    std::vector<Ant*> myAnts;
     // std::vector<Location> myAnts;
     std::vector<Location> enemyAnts, myHills, enemyHills, food, waters;
 
