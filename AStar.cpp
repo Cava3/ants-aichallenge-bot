@@ -28,6 +28,7 @@ std::vector<Location> AStar::getPath(const State& state) {
         const_cast<State&>(state).bug << "ASTAR ! " << (*it)->location.col << "," << (*it)->location.row << std::endl;
     }
 
+    const_cast<State&>(state).bug << "ASTAR ! Path size : " << path.size() << std::endl;
     return path;
 }
 

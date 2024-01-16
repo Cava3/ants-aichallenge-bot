@@ -19,19 +19,15 @@ void Bot::playGame() {
     //continues making moves while the game is not over
     while(std::cin >> state)
     {
-        try {
-            state.updateVisionInformation();
-            state.addFromMemory();
-            const_cast<State&>(state).bug << "PlayStyle : " << state.playstyle << std::endl;
+        const_cast<State&>(state).bug << "Turn " << state.turn << ":" << std::endl;
+        state.updateVisionInformation();
+        state.addFromMemory();
+        const_cast<State&>(state).bug << "PlayStyle : " << state.playstyle << std::endl;
 
-        
-            makeMoves();
+        makeMoves();
 
-            state.updateMemory();
-            endTurn();
-        } catch (const std::exception& e) {
-            const_cast<State&>(state).bug << "Exception : " << e.what() << std::endl;
-        }
+        state.updateMemory();
+        endTurn();
     }
 };
 
@@ -69,4 +65,5 @@ void Bot::endTurn() {
     state.turn++;
 
     std::cout << "go" << std::endl;
+    state.bug << "Turn ended" << std::endl;
 };

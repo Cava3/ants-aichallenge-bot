@@ -83,7 +83,10 @@ bool State::isLocationSafe(const Location& location) {
         return false;
     }
 
-    return !grid[location.row][location.col].isFood;
+    if(grid[location.row][location.col].isFood)
+        return false;
+
+    return true;
 }
 
 /*
