@@ -59,6 +59,7 @@ Location State::getLocation(const Location& loc_ref, int direction) const {
     return Location(nLocRow, nLocCol);
 }
 
+// Vérifie si la fourmi peut se rendre sur cette case
 bool State::isLocationReachable(const Location& loc_ref) const {
     // LA Location doit être dans la grille
     if(loc_ref.row < 0 || loc_ref.row >= rows || loc_ref.col < 0 || loc_ref.col >= cols)
@@ -71,6 +72,8 @@ bool State::isLocationReachable(const Location& loc_ref) const {
     return true;
 }
 
+// Vérifie si c'est une bonne idée pour la fourmi d'aller sur cette casse
+// Si fourmi allié = suicide, si food = move bloqué par l'engine
 bool State::isLocationSafe(const Location& loc_ref) {
     if(grid[loc_ref.row][loc_ref.col].ant == 0) {
         return false;
