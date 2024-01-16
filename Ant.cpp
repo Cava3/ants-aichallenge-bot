@@ -21,6 +21,7 @@ Location Ant::getDestination() {
     return _destination;
 }
 
+// Effectue les actions de la fourmi
 void Ant::playTurn(State& state_ref, double timeLimit) {
     const_cast<State&>(state_ref).bug << "Ant::playTurn()" << std::endl;
     const_cast<State&>(state_ref).bug << "Ant " << id << " is playing" << std::endl;
@@ -42,6 +43,7 @@ void Ant::playTurn(State& state_ref, double timeLimit) {
     _makeMove(state_ref, direction);
 }
 
+// Met à jour la destination de la fourmi et son path
 void Ant::_setDestination(const State& state_ref, Location location) {
     const_cast<State&>(state_ref).bug << "Ant::_setDestination()" << std::endl;
     _destination = location;
@@ -53,6 +55,7 @@ void Ant::_setDestination(const State& state_ref, Location location) {
     }
 }
 
+// Retourne la direction vers laquelle aller pour rejoindre la location demandée
 int Ant::_selectDirection(const State& state_ref, Location nLoc, double timeLimit) {
     const_cast<State&>(state_ref).bug << "Ant::_selectDirection()" << std::endl;
 
@@ -80,6 +83,7 @@ int Ant::_selectDirection(const State& state_ref, Location nLoc, double timeLimi
     return direction;
 }
 
+// Retourne la location de la nourriture la plus proche de la fourmi
 Location Ant::_findClosestFood(const State& state_ref) {
     const_cast<State&>(state_ref).bug << "Ant::_findClosestFood()" << std::endl;
     // Calculer la distance en fonction du AStar, pas à vol d'oiseau
@@ -105,6 +109,7 @@ Location Ant::_findClosestFood(const State& state_ref) {
     return closestFood;
 }
 
+// Renvoie la position de la case vers laquelle se diriger en fonction des différentes stratégies
 Location Ant::takeDecision(const State& state_ref, double timeLimit) {
     Location closestFood;
     Location randomLocation;
@@ -279,6 +284,7 @@ Location Ant::takeDecision(const State& state_ref, double timeLimit) {
     return Location(-1, -1);
 }
 
+// Effectue le déplacement de la fourmi
 void Ant::_makeMove(State& state_ref, int direction) {
     const_cast<State&>(state_ref).bug << "Ant::_makeMove()" << std::endl;
     const_cast<State&>(state_ref).bug << "Current location " << _position.row << ":" << _position.col << std::endl;
@@ -295,6 +301,7 @@ void Ant::_makeMove(State& state_ref, int direction) {
     state_ref.makeMove(_position, direction);
 }
 
+// Met à jour les positions de la fourmi selon si son mouvement a été validé par l'engine ou non
 void Ant::validateLastTurnMove(State& state, bool validated) {
     if(validated) {
         _position = _nextTurnPosition;
